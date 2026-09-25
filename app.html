@@ -23,43 +23,44 @@
   <section id="authView" class="auth-shell">
     <div class="auth-card">
       <span class="eyebrow">StarPlusAI account</span>
-      <h1 id="authTitle">Create your account</h1>
-      <p id="authSubtitle">Start your review-management workspace.</p>
-
-      <form id="signupForm" class="auth-form">
+      <h1 id="authTitle">Welcome back</h1>
+      <p id="authSubtitle">Log in to your review-management workspace.</p>
+      <form id="loginForm" class="auth-form">
+        <label>Email<input id="loginEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+        <label>Password<input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Your password"></label>
+        <button class="button primary full" type="submit">Log in</button>
+      </form>
+      <form id="signupForm" class="auth-form hidden">
         <label>Business name<input id="businessName" type="text" required autocomplete="organization" placeholder="Your business"></label>
         <label>Email<input id="signupEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
         <label>Password<input id="signupPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
         <button class="button primary full" type="submit">Create account</button>
       </form>
-
-      <form id="loginForm" class="auth-form hidden">
-        <label>Email<input id="loginEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-        <label>Password<input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Your password"></label>
-        <button class="button primary full" type="submit">Log in</button>
-      </form>
-
       <form id="resetForm" class="auth-form hidden">
         <label>Email<input id="resetEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
         <button class="button primary full" type="submit">Send reset link</button>
       </form>
-
       <form id="newPasswordForm" class="auth-form hidden">
         <label>New password<input id="newPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
         <button class="button primary full" type="submit">Update password</button>
       </form>
-
       <div id="authLinks" class="auth-links">
-        <button id="showLogin" type="button" class="text-button">Already have an account? Log in</button>
+        <button id="showSignup" type="button" class="text-button">Need an account? Create one</button>
+        <button id="showLogin" type="button" class="text-button hidden">Already have an account? Log in</button>
         <button id="showReset" type="button" class="text-button">Forgot your password?</button>
       </div>
     </div>
   </section>
 
   <section id="dashboardView" class="hidden">
-    <span class="eyebrow">Business dashboard</span>
-    <h1 id="welcome">Welcome to StarPlusAI</h1>
-    <p>Manage customers, review requests and incoming reviews from one workspace.</p>
+    <div class="dashboard-heading">
+      <div>
+        <span class="eyebrow">Business dashboard</span>
+        <h1 id="welcome">Welcome to StarPlusAI</h1>
+        <p>Collect customer feedback, monitor reviews and turn positive experiences into visible trust.</p>
+      </div>
+      <button id="quickAddBtn" class="button primary">+ Add customer</button>
+    </div>
 
     <section class="dash">
       <div class="dash-card"><span>Total requests</span><strong id="requestCount">0</strong></div>
@@ -68,167 +69,233 @@
       <div class="dash-card"><span>Plan</span><strong id="plan">Trial</strong></div>
     </section>
 
-    <section class="panel">
-      <h2>Customers</h2>
-      <p>Your customer list will appear here as customer management is connected.</p>
+    <section class="panel" id="customerPanel">
+      <div class="panel-head">
+        <div><h2>Customers</h2><p>Add customers here, then send them a review request.</p></div>
+        <button id="addCustomerBtn" class="button secondary">Add customer</button>
+      </div>
+      <form id="customerForm" class="inline-form hidden">
+        <input id="customerName" type="text" required maxlength="120" placeholder="Customer name">
+        <input id="customerEmail" type="email" maxlength="254" placeholder="Customer email">
+        <input id="customerPhone" type="tel" maxlength="40" placeholder="Phone (optional)">
+        <button class="button primary" type="submit">Save customer</button>
+        <button id="cancelCustomer" class="button secondary" type="button">Cancel</button>
+      </form>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Action</th></tr></thead>
+          <tbody id="customerRows"><tr><td colspan="4">Loading customers…</td></tr></tbody>
+        </table>
+      </div>
     </section>
+
     <section class="panel">
-      <h2>Review requests</h2>
-      <p>Request dispatch will appear here when the review-request service is connected.</p>
+      <div class="panel-head">
+        <div><h2>Review requests</h2><p>Quick-send is designed around the same workflow used by established review platforms: select a customer and create a request.</p></div>
+        <button id="requestBtn" class="button primary">Send request</button>
+      </div>
+      <form id="requestForm" class="inline-form hidden">
+        <select id="requestCustomer" required><option value="">Choose a customer</option></select>
+        <button class="button primary" type="submit">Create review request</button>
+        <button id="cancelRequest" class="button secondary" type="button">Cancel</button>
+      </form>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Customer</th><th>Status</th><th>Created</th></tr></thead>
+          <tbody id="requestRows"><tr><td colspan="3">Loading requests…</td></tr></tbody>
+        </table>
+      </div>
     </section>
+
     <section class="panel">
-      <h2>Reviews</h2>
-      <p>Incoming reviews will appear here when customers submit them.</p>
+      <div class="panel-head">
+        <div><h2>Incoming reviews</h2><p>Keep the review feed visible so you can act on feedback quickly.</p></div>
+        <select id="reviewFilter" class="compact-select"><option value="all">All ratings</option><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select>
+      </div>
+      <div id="reviewList" class="review-list"><div class="empty-state">No reviews yet.</div></div>
     </section>
+
     <section class="panel">
-      <h2>Widget &amp; API</h2>
-      <p>Your public review widget and API tools will be added after the review flow is connected.</p>
+      <div class="panel-head"><div><h2>Widget & API</h2><p>Once the public review flow is live, this area will provide your embeddable widget and API credentials.</p></div></div>
+      <div class="widget-preview"><strong>Review widget</strong><span>Coming next: public review page + embeddable review feed.</span></div>
     </section>
   </section>
-</main><script>window.addEventListener("keydown",e=>{if(e.key==="Escape")console.log("StarPlusAI dashboard")});</script>
-
+</main>
 <script>
 const SUPABASE_URL = 'https://rxebfyhoojuyasddkqyr.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_LUBsZv3T2XUey0jZ5BI4vw_6shsxEfg';
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
-
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
+let currentUser = null;
+let currentReviews = [];
+
 const toast = (message, type='success') => {
-  const el = $('toast');
-  el.textContent = message;
-  el.className = 'toast ' + type + ' show';
-  clearTimeout(window.toastTimer);
-  window.toastTimer = setTimeout(() => el.classList.remove('show'), 4200);
+  const el = $('toast'); el.textContent = message; el.className = 'toast ' + type + ' show';
+  clearTimeout(window.toastTimer); window.toastTimer = setTimeout(() => el.classList.remove('show'), 4200);
 };
 const show = id => $(id).classList.remove('hidden');
 const hide = id => $(id).classList.add('hidden');
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function setAuthMode(mode) {
-  hide('signupForm'); hide('loginForm'); hide('resetForm'); hide('newPasswordForm');
+  hide('loginForm'); hide('signupForm'); hide('resetForm'); hide('newPasswordForm');
+  show('authLinks'); hide('showSignup'); hide('showLogin'); show('showReset');
   if (mode === 'signup') {
-    show('signupForm'); $('authTitle').textContent='Create your account'; $('authSubtitle').textContent='Start your review-management workspace.';
-    show('authLinks'); show('showLogin'); show('showReset');
-  } else if (mode === 'login') {
-    show('loginForm'); $('authTitle').textContent='Welcome back'; $('authSubtitle').textContent='Log in to your StarPlusAI dashboard.';
-    show('authLinks'); show('showLogin'); show('showReset');
+    show('signupForm'); show('showLogin');
+    $('authTitle').textContent='Create your account';
+    $('authSubtitle').textContent='Start your review-management workspace.';
   } else if (mode === 'reset') {
-    show('resetForm'); $('authTitle').textContent='Reset your password'; $('authSubtitle').textContent='We will email you a secure password-reset link.';
-    show('authLinks'); show('showLogin'); show('showReset');
+    show('resetForm'); show('showLogin');
+    $('authTitle').textContent='Reset your password';
+    $('authSubtitle').textContent='We will email you a secure password-reset link.';
+  } else if (mode === 'newPassword') {
+    show('newPasswordForm'); hide('authLinks');
+    $('authTitle').textContent='Choose a new password';
+    $('authSubtitle').textContent='Set a new password for your StarPlusAI account.';
   } else {
-    show('newPasswordForm'); $('authTitle').textContent='Choose a new password'; $('authSubtitle').textContent='Set a new password for your StarPlusAI account.';
-    hide('authLinks');
+    show('loginForm'); show('showSignup');
+    $('authTitle').textContent='Welcome back';
+    $('authSubtitle').textContent='Log in to your review-management workspace.';
   }
 }
 
 async function loadDashboard(user) {
-  hide('authView'); show('dashboardView'); show('logoutBtn');
-  const { data: business, error: businessError } = await db.from('businesses').select('name,email,plan,subscription_status').eq('id', user.id).maybeSingle();
-  if (businessError) { toast('We could not load your business profile.', 'error'); return; }
-  if (!business) {
-    toast('Your account is signed in, but the business profile is missing.', 'error');
-    return;
-  }
+  currentUser = user; hide('authView'); show('dashboardView'); show('logoutBtn');
+  const { data: business, error: businessError } = await db.from('businesses')
+    .select('name,plan,subscription_status').eq('id', user.id).maybeSingle();
+  if (businessError || !business) return toast('We could not load your business profile.', 'error');
   $('welcome').textContent = 'Welcome, ' + business.name;
   $('plan').textContent = business.plan === 'trial' ? 'Trial' : business.plan[0].toUpperCase()+business.plan.slice(1);
 
-  const [{ count: requests }, { count: reviews }, { data: ratings }] = await Promise.all([
-    db.from('review_requests').select('id', { count:'exact', head:true }).eq('business_id', user.id),
-    db.from('reviews').select('id', { count:'exact', head:true }).eq('business_id', user.id),
-    db.from('reviews').select('rating').eq('business_id', user.id).eq('status','approved')
+  const [customers, requests, reviews] = await Promise.all([
+    db.from('customers').select('id,name,email,phone,created_at').eq('business_id',user.id).order('created_at',{ascending:false}),
+    db.from('review_requests').select('id,status,created_at,customer_id,customers(name,email)').eq('business_id',user.id).order('created_at',{ascending:false}).limit(20),
+    db.from('reviews').select('id,rating,comment,status,created_at,customer_id,customers(name)').eq('business_id',user.id).order('created_at',{ascending:false}).limit(50)
   ]);
-  $('requestCount').textContent = requests || 0;
-  $('reviewCount').textContent = reviews || 0;
-  if (ratings && ratings.length) {
-    const avg = ratings.reduce((sum,r)=>sum+r.rating,0)/ratings.length;
-    $('averageRating').textContent = avg.toFixed(1) + ' ★';
-  } else $('averageRating').textContent = '—';
+  if (customers.error || requests.error || reviews.error) return toast('Some dashboard data could not be loaded.', 'error');
+
+  $('requestCount').textContent = requests.data?.length || 0;
+  $('reviewCount').textContent = reviews.data?.length || 0;
+  currentReviews = reviews.data || [];
+  const approved = currentReviews.filter(r => r.status === 'approved');
+  $('averageRating').textContent = approved.length ? (approved.reduce((s,r)=>s+r.rating,0)/approved.length).toFixed(1)+' ★' : '—';
+
+  renderCustomers(customers.data || []);
+  renderRequests(requests.data || []);
+  renderReviews();
+  populateRequestCustomers(customers.data || []);
+}
+
+function renderCustomers(rows) {
+  $('customerRows').innerHTML = rows.length ? rows.map(c => `<tr>
+    <td><strong>${esc(c.name)}</strong></td><td>${esc(c.email || '—')}</td><td>${esc(c.phone || '—')}</td>
+    <td><button class="text-button send-customer" data-id="${c.id}">Request review</button></td>
+  </tr>`).join('') : '<tr><td colspan="4">No customers yet. Add your first customer above.</td></tr>';
+  document.querySelectorAll('.send-customer').forEach(btn => btn.addEventListener('click', () => {
+    $('requestCustomer').value = btn.dataset.id; show('requestForm'); $('requestForm').scrollIntoView({behavior:'smooth',block:'center'});
+  }));
+}
+
+function renderRequests(rows) {
+  $('requestRows').innerHTML = rows.length ? rows.map(r => `<tr>
+    <td>${esc(r.customers?.name || r.customers?.email || 'Customer')}</td>
+    <td><span class="status-badge ${esc(r.status)}">${esc(r.status)}</span></td>
+    <td>${new Date(r.created_at).toLocaleString()}</td>
+  </tr>`).join('') : '<tr><td colspan="3">No review requests yet.</td></tr>';
+}
+
+function renderReviews() {
+  const filter = $('reviewFilter').value;
+  const rows = currentReviews.filter(r => filter === 'all' || String(r.rating) === filter);
+  $('reviewList').innerHTML = rows.length ? rows.map(r => `<article class="review-card">
+    <div class="review-card-top"><strong>${esc(r.customers?.name || 'Customer')}</strong><span class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span></div>
+    <p>${esc(r.comment)}</p><small>${new Date(r.created_at).toLocaleString()} · ${esc(r.status)}</small>
+  </article>`).join('') : '<div class="empty-state">No reviews match this filter.</div>';
+}
+
+function populateRequestCustomers(rows) {
+  $('requestCustomer').innerHTML = '<option value="">Choose a customer</option>' + rows.map(c => `<option value="${c.id}">${esc(c.name)}${c.email ? ' — '+esc(c.email) : ''}</option>`).join('');
 }
 
 $('signupForm').addEventListener('submit', async e => {
   e.preventDefault();
   const businessName=$('businessName').value.trim(), email=$('signupEmail').value.trim(), password=$('signupPassword').value;
   if(password.length < 8) return toast('Password must be at least 8 characters.', 'error');
-  const { data, error } = await db.auth.signUp({ email, password, options: { data: { business_name: businessName } } });
-  if(error) return toast(error.message, 'error');
-  if(!data.user) return toast('Account could not be created. Please try again.', 'error');
-  if(data.session) {
-    toast('Account created successfully.', 'success');
-    await loadDashboard(data.user);
-  } else {
-    toast('Account created. Check your email to confirm your account, then log in.', 'success');
-    setAuthMode('login');
-  }
+  const { data, error } = await db.auth.signUp({email,password,options:{data:{business_name:businessName}}});
+  if(error) return toast(error.message,'error');
+  if(!data.user) return toast('Account could not be created. Please try again.','error');
+  if(data.session) { toast('Account created successfully.'); await loadDashboard(data.user); }
+  else { toast('Account created. Check your email to confirm, then log in.'); setAuthMode('login'); }
 });
 
 $('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const { data, error } = await db.auth.signInWithPassword({ email:$('loginEmail').value.trim(), password:$('loginPassword').value });
-  if(error) return toast('Login failed: ' + error.message, 'error');
-  toast('Logged in successfully.', 'success');
-  await loadDashboard(data.user);
+  const {data,error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});
+  if(error) return toast('Login failed: '+error.message,'error');
+  toast('Logged in successfully.'); await loadDashboard(data.user);
 });
 
 $('resetForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const email=$('resetEmail').value.trim();
-  const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
-  if(error) return toast(error.message, 'error');
-  toast('Password reset link sent. Check your email.', 'success');
+  const {error}=await db.auth.resetPasswordForEmail($('resetEmail').value.trim(),{redirectTo:window.location.origin+window.location.pathname});
+  if(error) return toast(error.message,'error'); toast('Password reset link sent. Check your email.');
 });
 
 $('newPasswordForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const { error } = await db.auth.updateUser({ password:$('newPassword').value });
-  if(error) return toast(error.message, 'error');
-  toast('Password updated successfully. You can now use your new password.', 'success');
-  setAuthMode('login');
+  const {error}=await db.auth.updateUser({password:$('newPassword').value});
+  if(error) return toast(error.message,'error');
+  toast('Password updated successfully.'); setAuthMode('login');
 });
 
-$('showLogin').addEventListener('click', () => setAuthMode('login'));
-$('showReset').addEventListener('click', () => setAuthMode('reset'));
-$('logoutBtn').addEventListener('click', async () => {
-  const { error } = await db.auth.signOut();
-  if(error) return toast('Could not log out. Please try again.', 'error');
-  hide('dashboardView'); hide('logoutBtn'); show('authView'); setAuthMode('login');
-  toast('You have been logged out.', 'success');
+$('showSignup').addEventListener('click',()=>setAuthMode('signup'));
+$('showLogin').addEventListener('click',()=>setAuthMode('login'));
+$('showReset').addEventListener('click',()=>setAuthMode('reset'));
+
+$('logoutBtn').addEventListener('click',async()=>{
+  const {error}=await db.auth.signOut(); if(error) return toast('Could not log out.','error');
+  hide('dashboardView'); hide('logoutBtn'); show('authView'); setAuthMode('login'); toast('You have been logged out.');
 });
 
-db.auth.onAuthStateChange(async (event, session) => {
-  if(event === 'PASSWORD_RECOVERY') setAuthMode('newPassword');
-  else if(session) await loadDashboard(session.user);
+$('addCustomerBtn').addEventListener('click',()=>show('customerForm'));
+$('quickAddBtn').addEventListener('click',()=>{show('customerForm');$('customerPanel').scrollIntoView({behavior:'smooth',block:'center'});});
+$('cancelCustomer').addEventListener('click',()=>hide('customerForm'));
+
+$('customerForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const name=$('customerName').value.trim(), email=$('customerEmail').value.trim(), phone=$('customerPhone').value.trim();
+  const {error}=await db.from('customers').insert({business_id:currentUser.id,name,email:email||null,phone:phone||null});
+  if(error) return toast(error.message,'error');
+  $('customerForm').reset(); hide('customerForm'); toast('Customer added.'); await loadDashboard(currentUser);
 });
 
-(async () => {
-  setAuthMode('signup');
-  const { data } = await db.auth.getSession();
+$('requestBtn').addEventListener('click',()=>show('requestForm'));
+$('cancelRequest').addEventListener('click',()=>hide('requestForm'));
+
+$('requestForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const customerId=$('requestCustomer').value;
+  if(!customerId) return toast('Choose a customer first.','error');
+  const {error}=await db.from('review_requests').insert({business_id:currentUser.id,customer_id:customerId,status:'pending'});
+  if(error) return toast(error.message,'error');
+  $('requestForm').reset(); hide('requestForm');
+  toast('Review request created. Email/SMS dispatch will be connected through the secure server next.');
+  await loadDashboard(currentUser);
+});
+
+$('reviewFilter').addEventListener('change',renderReviews);
+
+db.auth.onAuthStateChange(async (event,session)=>{
+  if(event==='PASSWORD_RECOVERY') setAuthMode('newPassword');
+  else if(session && !currentUser) await loadDashboard(session.user);
+});
+
+(async()=>{
+  const params=new URLSearchParams(location.search);
+  setAuthMode(params.get('mode')==='signup'?'signup':'login');
+  const {data}=await db.auth.getSession();
   if(data.session) await loadDashboard(data.session.user);
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL="https://rxebfyhoojuyasddkqyr.supabase.co";
-const SUPABASE_KEY="sb_publishable_LUBsZv3T2XUey0jZ5BI4vw_6shsxEfg";
-const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-async function loadDashboard(){
- const {data:{session}}=await client.auth.getSession();
- if(!session){location.href="auth.html?mode=login";return}
- const id=session.user.id;
- const {data:business,error:be}=await client.from("businesses").select("name,plan,subscription_status").eq("id",id).single();
- if(be){console.error(be);return}
- document.querySelector("main h1").textContent="Welcome, "+business.name;
- const [customers,requests,reviews]=await Promise.all([
-  client.from("customers").select("id",{count:"exact",head:true}).eq("business_id",id),
-  client.from("review_requests").select("id",{count:"exact",head:true}).eq("business_id",id),
-  client.from("reviews").select("rating").eq("business_id",id)
- ]);
- document.querySelectorAll(".dash-card strong")[0].textContent=requests.count||0;
- document.querySelectorAll(".dash-card strong")[1].textContent=reviews.data?.length||0;
- const ratings=(reviews.data||[]).map(x=>x.rating);
- document.querySelectorAll(".dash-card strong")[2].textContent=ratings.length?(ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1):"—";
- document.querySelectorAll(".dash-card strong")[3].textContent=business.plan;
- document.querySelector(".panel:nth-of-type(1) p").textContent=(customers.count||0)+" customer(s) currently stored.";
-}
-loadDashboard();
-</script></body>
+</body>
 </html>
