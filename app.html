@@ -149,14 +149,9 @@ $('signupForm').addEventListener('submit', async e => {
   e.preventDefault();
   const businessName=$('businessName').value.trim(), email=$('signupEmail').value.trim(), password=$('signupPassword').value;
   if(password.length < 8) return toast('Password must be at least 8 characters.', 'error');
-  const { data, error } = await db.auth.signUp({ email, password });
+  const { data, error } = await db.auth.signUp({ email, password, options: { data: { business_name: businessName } } });
   if(error) return toast(error.message, 'error');
   if(!data.user) return toast('Account could not be created. Please try again.', 'error');
-  const { error: profileError } = await db.from('businesses').insert({ id:data.user.id, name:businessName, email });
-  if(profileError) {
-    if(profileError.code === '23505') return toast('This business profile already exists. Try logging in.', 'error');
-    return toast('Account created, but the business profile could not be saved.', 'error');
-  }
   if(data.session) {
     toast('Account created successfully.', 'success');
     await loadDashboard(data.user);
