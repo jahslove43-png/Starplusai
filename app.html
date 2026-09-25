@@ -1,6 +1,214 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>StarPlusAI Dashboard</title><link rel="stylesheet" href="styles.css"><style>.app{max-width:1200px;margin:auto;padding:50px 6%}.dash{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.dash-card{background:#fff;border:1px solid #e3e9f0;border-radius:16px;padding:22px}.dash-card strong{font-size:2rem;display:block}.panel{background:#fff;border:1px solid #e3e9f0;border-radius:18px;padding:25px;margin-top:22px}@media(max-width:800px){.dash{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.dash{grid-template-columns:1fr}}</style></head>
-<body><header class="site-header"><a class="logo" href="index.html">StarPlusAI</a><a class="nav-button" href="index.html">Back to site</a></header>
-<main class="app"><span class="eyebrow">Business dashboard</span><h1>Welcome to StarPlusAI</h1><p>Your application foundation is ready. The next phase connects these panels to real authentication and Supabase data.</p>
-<section class="dash"><div class="dash-card"><span>Total requests</span><strong>0</strong></div><div class="dash-card"><span>Total reviews</span><strong>0</strong></div><div class="dash-card"><span>Average rating</span><strong>—</strong></div><div class="dash-card"><span>Plan</span><strong>Trial</strong></div></section>
-<section class="panel"><h2>Customers</h2><p>Customer management will be connected to the database in the next phase.</p></section><section class="panel"><h2>Review requests</h2><p>Request dispatch will be connected to the backend in the next phase.</p></section><section class="panel"><h2>Reviews</h2><p>Incoming reviews will appear here once authentication and database storage are connected.</p></section><section class="panel"><h2>Widget &amp; API</h2><p>The review widget and API documentation will be added after the core data model is connected.</p></section></main></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="StarPlusAI business dashboard and account access.">
+  <title>StarPlusAI — Account & Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html">StarPlusAI</a>
+  <div class="header-actions">
+    <a class="nav-button" href="index.html">Back to site</a>
+    <button id="logoutBtn" class="button secondary hidden">Log out</button>
+  </div>
+</header>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<main class="app">
+  <section id="authView" class="auth-shell">
+    <div class="auth-card">
+      <span class="eyebrow">StarPlusAI account</span>
+      <h1 id="authTitle">Create your account</h1>
+      <p id="authSubtitle">Start your review-management workspace.</p>
+
+      <form id="signupForm" class="auth-form">
+        <label>Business name<input id="businessName" type="text" required autocomplete="organization" placeholder="Your business"></label>
+        <label>Email<input id="signupEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+        <label>Password<input id="signupPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
+        <button class="button primary full" type="submit">Create account</button>
+      </form>
+
+      <form id="loginForm" class="auth-form hidden">
+        <label>Email<input id="loginEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+        <label>Password<input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Your password"></label>
+        <button class="button primary full" type="submit">Log in</button>
+      </form>
+
+      <form id="resetForm" class="auth-form hidden">
+        <label>Email<input id="resetEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+        <button class="button primary full" type="submit">Send reset link</button>
+      </form>
+
+      <form id="newPasswordForm" class="auth-form hidden">
+        <label>New password<input id="newPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
+        <button class="button primary full" type="submit">Update password</button>
+      </form>
+
+      <div id="authLinks" class="auth-links">
+        <button id="showLogin" type="button" class="text-button">Already have an account? Log in</button>
+        <button id="showReset" type="button" class="text-button">Forgot your password?</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboardView" class="hidden">
+    <span class="eyebrow">Business dashboard</span>
+    <h1 id="welcome">Welcome to StarPlusAI</h1>
+    <p>Manage customers, review requests and incoming reviews from one workspace.</p>
+
+    <section class="dash">
+      <div class="dash-card"><span>Total requests</span><strong id="requestCount">0</strong></div>
+      <div class="dash-card"><span>Total reviews</span><strong id="reviewCount">0</strong></div>
+      <div class="dash-card"><span>Average rating</span><strong id="averageRating">—</strong></div>
+      <div class="dash-card"><span>Plan</span><strong id="plan">Trial</strong></div>
+    </section>
+
+    <section class="panel">
+      <h2>Customers</h2>
+      <p>Your customer list will appear here as customer management is connected.</p>
+    </section>
+    <section class="panel">
+      <h2>Review requests</h2>
+      <p>Request dispatch will appear here when the review-request service is connected.</p>
+    </section>
+    <section class="panel">
+      <h2>Reviews</h2>
+      <p>Incoming reviews will appear here when customers submit them.</p>
+    </section>
+    <section class="panel">
+      <h2>Widget &amp; API</h2>
+      <p>Your public review widget and API tools will be added after the review flow is connected.</p>
+    </section>
+  </section>
+</main>
+
+<script>
+const SUPABASE_URL = 'https://rxebfyhoojuyasddkqyr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_LUBsZv3T2XUey0jZ5BI4vw_6shsxEfg';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = id => document.getElementById(id);
+const toast = (message, type='success') => {
+  const el = $('toast');
+  el.textContent = message;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => el.classList.remove('show'), 4200);
+};
+const show = id => $(id).classList.remove('hidden');
+const hide = id => $(id).classList.add('hidden');
+
+function setAuthMode(mode) {
+  hide('signupForm'); hide('loginForm'); hide('resetForm'); hide('newPasswordForm');
+  if (mode === 'signup') {
+    show('signupForm'); $('authTitle').textContent='Create your account'; $('authSubtitle').textContent='Start your review-management workspace.';
+    show('authLinks'); show('showLogin'); show('showReset');
+  } else if (mode === 'login') {
+    show('loginForm'); $('authTitle').textContent='Welcome back'; $('authSubtitle').textContent='Log in to your StarPlusAI dashboard.';
+    show('authLinks'); show('showLogin'); show('showReset');
+  } else if (mode === 'reset') {
+    show('resetForm'); $('authTitle').textContent='Reset your password'; $('authSubtitle').textContent='We will email you a secure password-reset link.';
+    show('authLinks'); show('showLogin'); show('showReset');
+  } else {
+    show('newPasswordForm'); $('authTitle').textContent='Choose a new password'; $('authSubtitle').textContent='Set a new password for your StarPlusAI account.';
+    hide('authLinks');
+  }
+}
+
+async function loadDashboard(user) {
+  hide('authView'); show('dashboardView'); show('logoutBtn');
+  const { data: business, error: businessError } = await db.from('businesses').select('name,email,plan,subscription_status').eq('id', user.id).maybeSingle();
+  if (businessError) { toast('We could not load your business profile.', 'error'); return; }
+  if (!business) {
+    toast('Your account is signed in, but the business profile is missing.', 'error');
+    return;
+  }
+  $('welcome').textContent = 'Welcome, ' + business.name;
+  $('plan').textContent = business.plan === 'trial' ? 'Trial' : business.plan[0].toUpperCase()+business.plan.slice(1);
+
+  const [{ count: requests }, { count: reviews }, { data: ratings }] = await Promise.all([
+    db.from('review_requests').select('id', { count:'exact', head:true }).eq('business_id', user.id),
+    db.from('reviews').select('id', { count:'exact', head:true }).eq('business_id', user.id),
+    db.from('reviews').select('rating').eq('business_id', user.id).eq('status','approved')
+  ]);
+  $('requestCount').textContent = requests || 0;
+  $('reviewCount').textContent = reviews || 0;
+  if (ratings && ratings.length) {
+    const avg = ratings.reduce((sum,r)=>sum+r.rating,0)/ratings.length;
+    $('averageRating').textContent = avg.toFixed(1) + ' ★';
+  } else $('averageRating').textContent = '—';
+}
+
+$('signupForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const businessName=$('businessName').value.trim(), email=$('signupEmail').value.trim(), password=$('signupPassword').value;
+  if(password.length < 8) return toast('Password must be at least 8 characters.', 'error');
+  const { data, error } = await db.auth.signUp({ email, password });
+  if(error) return toast(error.message, 'error');
+  if(!data.user) return toast('Account could not be created. Please try again.', 'error');
+  const { error: profileError } = await db.from('businesses').insert({ id:data.user.id, name:businessName, email });
+  if(profileError) {
+    if(profileError.code === '23505') return toast('This business profile already exists. Try logging in.', 'error');
+    return toast('Account created, but the business profile could not be saved.', 'error');
+  }
+  if(data.session) {
+    toast('Account created successfully.', 'success');
+    await loadDashboard(data.user);
+  } else {
+    toast('Account created. Check your email to confirm your account, then log in.', 'success');
+    setAuthMode('login');
+  }
+});
+
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const { data, error } = await db.auth.signInWithPassword({ email:$('loginEmail').value.trim(), password:$('loginPassword').value });
+  if(error) return toast('Login failed: ' + error.message, 'error');
+  toast('Logged in successfully.', 'success');
+  await loadDashboard(data.user);
+});
+
+$('resetForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email=$('resetEmail').value.trim();
+  const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
+  if(error) return toast(error.message, 'error');
+  toast('Password reset link sent. Check your email.', 'success');
+});
+
+$('newPasswordForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const { error } = await db.auth.updateUser({ password:$('newPassword').value });
+  if(error) return toast(error.message, 'error');
+  toast('Password updated successfully. You can now use your new password.', 'success');
+  setAuthMode('login');
+});
+
+$('showLogin').addEventListener('click', () => setAuthMode('login'));
+$('showReset').addEventListener('click', () => setAuthMode('reset'));
+$('logoutBtn').addEventListener('click', async () => {
+  const { error } = await db.auth.signOut();
+  if(error) return toast('Could not log out. Please try again.', 'error');
+  hide('dashboardView'); hide('logoutBtn'); show('authView'); setAuthMode('login');
+  toast('You have been logged out.', 'success');
+});
+
+db.auth.onAuthStateChange(async (event, session) => {
+  if(event === 'PASSWORD_RECOVERY') setAuthMode('newPassword');
+  else if(session) await loadDashboard(session.user);
+});
+
+(async () => {
+  setAuthMode('signup');
+  const { data } = await db.auth.getSession();
+  if(data.session) await loadDashboard(data.session.user);
+})();
+</script>
+</body>
+</html>
