@@ -85,7 +85,7 @@
       <p>Your public review widget and API tools will be added after the review flow is connected.</p>
     </section>
   </section>
-</main>
+</main><script>window.addEventListener("keydown",e=>{if(e.key==="Escape")console.log("StarPlusAI dashboard")});</script>
 
 <script>
 const SUPABASE_URL = 'https://rxebfyhoojuyasddkqyr.supabase.co';
@@ -205,5 +205,30 @@ db.auth.onAuthStateChange(async (event, session) => {
   if(data.session) await loadDashboard(data.session.user);
 })();
 </script>
-</body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://rxebfyhoojuyasddkqyr.supabase.co";
+const SUPABASE_KEY="sb_publishable_LUBsZv3T2XUey0jZ5BI4vw_6shsxEfg";
+const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+async function loadDashboard(){
+ const {data:{session}}=await client.auth.getSession();
+ if(!session){location.href="auth.html?mode=login";return}
+ const id=session.user.id;
+ const {data:business,error:be}=await client.from("businesses").select("name,plan,subscription_status").eq("id",id).single();
+ if(be){console.error(be);return}
+ document.querySelector("main h1").textContent="Welcome, "+business.name;
+ const [customers,requests,reviews]=await Promise.all([
+  client.from("customers").select("id",{count:"exact",head:true}).eq("business_id",id),
+  client.from("review_requests").select("id",{count:"exact",head:true}).eq("business_id",id),
+  client.from("reviews").select("rating").eq("business_id",id)
+ ]);
+ document.querySelectorAll(".dash-card strong")[0].textContent=requests.count||0;
+ document.querySelectorAll(".dash-card strong")[1].textContent=reviews.data?.length||0;
+ const ratings=(reviews.data||[]).map(x=>x.rating);
+ document.querySelectorAll(".dash-card strong")[2].textContent=ratings.length?(ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1):"—";
+ document.querySelectorAll(".dash-card strong")[3].textContent=business.plan;
+ document.querySelector(".panel:nth-of-type(1) p").textContent=(customers.count||0)+" customer(s) currently stored.";
+}
+loadDashboard();
+</script></body>
 </html>
