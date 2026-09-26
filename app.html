@@ -233,13 +233,32 @@ function renderRequests(rows) {
   document.querySelectorAll('.send-request').forEach(btn => btn.addEventListener('click', () => sendReviewEmail(btn.dataset.id)));
 }
 
+async function moderateReview(reviewId, status) {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session?.access_token) return toast('Your session has expired. Please log in again.', 'error');
+  const response = await fetch(SUPABASE_URL + '/functions/v1/moderate-review', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+    body: JSON.stringify({ review_id: reviewId, status })
+  });
+  let result = {}; try { result = await response.json(); } catch {}
+  if (!response.ok) return toast(result.error || 'Could not update the review.', 'error');
+  toast(status === 'approved' ? 'Review approved.' : 'Review rejected.');
+  await loadDashboard(currentUser);
+}
+
 function renderReviews() {
   const filter = $('reviewFilter').value;
   const rows = currentReviews.filter(r => filter === 'all' || String(r.rating) === filter);
   $('reviewList').innerHTML = rows.length ? rows.map(r => `<article class="review-card">
     <div class="review-card-top"><strong>${esc(r.customers?.name || 'Customer')}</strong><span class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span></div>
     <p>${esc(r.comment)}</p><small>${new Date(r.created_at).toLocaleString()} · ${esc(r.status)}</small>
+    <div class="moderation-actions">
+      ${r.status !== 'approved' ? '<button class="text-button moderate-review" data-id="' + esc(r.id) + '" data-status="approved">Approve</button>' : ''}
+      ${r.status !== 'rejected' ? '<button class="text-button moderate-review" data-id="' + esc(r.id) + '" data-status="rejected">Reject</button>' : ''}
+    </div>
   </article>`).join('') : '<div class="empty-state">No reviews match this filter.</div>';
+  document.querySelectorAll('.moderate-review').forEach(btn => btn.addEventListener('click', () => moderateReview(btn.dataset.id, btn.dataset.status)));
 }
 
 function populateRequestCustomers(rows) {
