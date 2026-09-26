@@ -169,7 +169,7 @@ async function loadDashboard(user) {
 
   const [customers, requests, reviews] = await Promise.all([
     db.from('customers').select('id,name,email,phone,created_at').eq('business_id',user.id).order('created_at',{ascending:false}),
-    db.from('review_requests').select('id,status,created_at,customer_id,customers(name,email)').eq('business_id',user.id).order('created_at',{ascending:false}).limit(20),
+    db.from('review_requests').select('id,status,created_at,public_token,customer_id,customers(name,email)').eq('business_id',user.id).order('created_at',{ascending:false}).limit(20),
     db.from('reviews').select('id,rating,comment,status,created_at,customer_id,customers(name)').eq('business_id',user.id).order('created_at',{ascending:false}).limit(50)
   ]);
   if (customers.error || requests.error || reviews.error) return toast('Some dashboard data could not be loaded.', 'error');
@@ -197,11 +197,18 @@ function renderCustomers(rows) {
 }
 
 function renderRequests(rows) {
-  $('requestRows').innerHTML = rows.length ? rows.map(r => `<tr>
-    <td>${esc(r.customers?.name || r.customers?.email || 'Customer')}</td>
-    <td><span class="status-badge ${esc(r.status)}">${esc(r.status)}</span></td>
-    <td>${new Date(r.created_at).toLocaleString()}</td>
-  </tr>`).join('') : '<tr><td colspan="3">No review requests yet.</td></tr>';
+  $('requestRows').innerHTML = rows.length ? rows.map(r => \`<tr>
+    <td>\${esc(r.customers?.name || r.customers?.email || 'Customer')}</td>
+    <td><span class="status-badge \${esc(r.status)}">\${esc(r.status)}</span></td>
+    <td>\${new Date(r.created_at).toLocaleString()}</td>
+    <td>\${r.public_token ? '<button class="text-button copy-request" data-token="' + esc(r.public_token) + '">Copy link</button>' : '—'}</td>
+  </tr>\`).join('') : '<tr><td colspan="4">No review requests yet.</td></tr>';
+  document.querySelectorAll('.copy-request').forEach(btn => btn.addEventListener('click', async () => {
+    const url = new URL('review.html', window.location.href);
+    url.searchParams.set('token', btn.dataset.token);
+    try { await navigator.clipboard.writeText(url.href); toast('Review link copied.'); }
+    catch { window.prompt('Copy this review link:', url.href); }
+  }));
 }
 
 function renderReviews() {
