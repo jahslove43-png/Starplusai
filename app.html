@@ -101,8 +101,8 @@
       </form>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Customer</th><th>Status</th><th>Created</th></tr></thead>
-          <tbody id="requestRows"><tr><td colspan="3">Loading requests…</td></tr></tbody>
+          <thead><tr><th>Customer</th><th>Status</th><th>Created</th><th>Action</th></tr></thead>
+          <tbody id="requestRows"><tr><td colspan="4">Loading requests…</td></tr></tbody>
         </table>
       </div>
     </section>
@@ -117,7 +117,7 @@
 
     <section class="panel">
       <div class="panel-head"><div><h2>Widget & API</h2><p>Once the public review flow is live, this area will provide your embeddable widget and API credentials.</p></div></div>
-      <div class="widget-preview"><strong>Review widget</strong><span>Coming next: public review page + embeddable review feed.</span></div>
+      <div class="widget-preview"><strong>Review widget</strong><span>Public review page is live. Next: embeddable review feed and API credentials.</span></div>
     </section>
   </section>
 </main>
@@ -196,12 +196,25 @@ function renderCustomers(rows) {
   }));
 }
 
+async function sendReviewEmail(requestId) {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session?.access_token) return toast('Your session has expired. Please log in again.', 'error');
+  const response = await fetch(SUPABASE_URL + '/functions/v1/send-review-request', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+    body: JSON.stringify({ request_id: requestId })
+  });
+  let result = {}; try { result = await response.json(); } catch {}
+  if (!response.ok) return toast(result.error || 'The review email could not be sent.', 'error');
+  toast('Review request email sent.');
+  await loadDashboard(currentUser);
+}
 function renderRequests(rows) {
   $('requestRows').innerHTML = rows.length ? rows.map(r => \`<tr>
     <td>\${esc(r.customers?.name || r.customers?.email || 'Customer')}</td>
     <td><span class="status-badge \${esc(r.status)}">\${esc(r.status)}</span></td>
     <td>\${new Date(r.created_at).toLocaleString()}</td>
-    <td>\${r.public_token ? '<button class="text-button copy-request" data-token="' + esc(r.public_token) + '">Copy link</button>' : '—'}</td>
+    <td>\${r.public_token ? '<button class="text-button copy-request" data-token="' + esc(r.public_token) + '">Copy link</button> <button class="text-button send-request" data-id="' + esc(r.id) + '">Send email</button>' : '—'}</td>
   </tr>\`).join('') : '<tr><td colspan="4">No review requests yet.</td></tr>';
   document.querySelectorAll('.copy-request').forEach(btn => btn.addEventListener('click', async () => {
     const url = new URL('review.html', window.location.href);
@@ -209,6 +222,7 @@ function renderRequests(rows) {
     try { await navigator.clipboard.writeText(url.href); toast('Review link copied.'); }
     catch { window.prompt('Copy this review link:', url.href); }
   }));
+  document.querySelectorAll('.send-request').forEach(btn => btn.addEventListener('click', () => sendReviewEmail(btn.dataset.id)));
 }
 
 function renderReviews() {
@@ -283,11 +297,11 @@ $('requestForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const customerId=$('requestCustomer').value;
   if(!customerId) return toast('Choose a customer first.','error');
-  const {error}=await db.from('review_requests').insert({business_id:currentUser.id,customer_id:customerId,status:'pending'});
+  const {data:created,error}=await db.from('review_requests').insert({business_id:currentUser.id,customer_id:customerId,status:'pending'}).select('id').single();
   if(error) return toast(error.message,'error');
   $('requestForm').reset(); hide('requestForm');
-  toast('Review request created. Email/SMS dispatch will be connected through the secure server next.');
   await loadDashboard(currentUser);
+  if(created?.id) await sendReviewEmail(created.id);
 });
 
 $('reviewFilter').addEventListener('change',renderReviews);
