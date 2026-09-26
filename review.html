@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Share your experience with a business.">
+<title>Leave a review — StarPlusAI</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header"><a class="logo" href="index.html">StarPlusAI</a></header>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<main class="review-page">
+  <section id="loading" class="review-shell"><div class="review-card"><span class="eyebrow">Customer feedback</span><h1>Loading your review request…</h1></div></section>
+  <section id="reviewView" class="review-shell hidden">
+    <div class="review-card">
+      <span class="eyebrow">Customer feedback</span>
+      <h1 id="reviewTitle">Share your experience</h1>
+      <p id="reviewIntro">Your feedback helps this business improve and helps future customers make informed decisions.</p>
+      <div class="rating-picker" aria-label="Choose a rating">
+        <button type="button" data-rating="1" aria-label="1 star">★</button>
+        <button type="button" data-rating="2" aria-label="2 stars">★</button>
+        <button type="button" data-rating="3" aria-label="3 stars">★</button>
+        <button type="button" data-rating="4" aria-label="4 stars">★</button>
+        <button type="button" data-rating="5" aria-label="5 stars">★</button>
+      </div>
+      <div id="ratingText" class="rating-text">Select a rating</div>
+      <form id="reviewForm">
+        <label>Your review<textarea id="comment" rows="7" maxlength="2000" required placeholder="Tell us about your experience…"></textarea></label>
+        <button class="button primary full" type="submit">Submit review</button>
+      </form>
+      <p class="review-note">Please keep your review honest, respectful, and based on your actual experience.</p>
+    </div>
+  </section>
+  <section id="successView" class="review-shell hidden"><div class="review-card success-card"><span class="eyebrow">Thank you</span><h1>Your review was submitted.</h1><p id="successText">Your feedback has been received and will be reviewed by the business.</p></div></section>
+</main>
+<script>
+const API='https://rxebfyhoojuyasddkqyr.supabase.co/functions/v1/public-review';
+const $=id=>document.getElementById(id);
+const token=new URLSearchParams(location.search).get('token');
+let rating=0;
+function show(id){$(id).classList.remove('hidden')}
+function hide(id){$(id).classList.add('hidden')}
+function toast(message,type='error'){const e=$('toast');e.textContent=message;e.className='toast '+type+' show';setTimeout(()=>e.classList.remove('show'),4500)}
+function setRating(value){
+  rating=value;
+  document.querySelectorAll('.rating-picker button').forEach(b=>b.classList.toggle('selected',Number(b.dataset.rating)<=value));
+  $('ratingText').textContent=['','Very poor','Poor','Okay','Good','Excellent'][value];
+}
+document.querySelectorAll('.rating-picker button').forEach(b=>b.addEventListener('click',()=>setRating(Number(b.dataset.rating))));
+$('reviewForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ if(!rating)return toast('Please choose a star rating.');
+ const comment=$('comment').value.trim();
+ if(comment.length<3)return toast('Please write a little more about your experience.');
+ const submit=e.submitter;submit.disabled=true;submit.textContent='Submitting…';
+ try{
+  const res=await fetch(API+'?token='+encodeURIComponent(token),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rating,comment})});
+  const data=await res.json();
+  if(!res.ok)throw new Error(data.error||'Could not submit your review.');
+  hide('reviewView');show('successView');
+ }catch(err){toast(err.message)}finally{submit.disabled=false;submit.textContent='Submit review'}
+});
+(async()=>{
+ if(!token){hide('loading');$('reviewTitle').textContent='Invalid review link';$('reviewIntro').textContent='This review link is missing its secure token.';show('reviewView');return}
+ try{
+  const res=await fetch(API+'?token='+encodeURIComponent(token));
+  const data=await res.json();
+  if(!res.ok)throw new Error(data.error||'This review link is unavailable.');
+  $('reviewTitle').textContent='How was your experience with '+data.request.business_name+'?';
+  $('reviewIntro').textContent='Hi '+data.request.customer_name+'. Your honest feedback helps '+data.request.business_name+' improve.';
+  hide('loading');show('reviewView');
+ }catch(err){hide('loading');$('reviewTitle').textContent='Review link unavailable';$('reviewIntro').textContent=err.message;show('reviewView')}
+})();
+</script>
+</body>
+</html>
