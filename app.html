@@ -117,7 +117,12 @@
 
     <section class="panel">
       <div class="panel-head"><div><h2>Widget & API</h2><p>Once the public review flow is live, this area will provide your embeddable widget and API credentials.</p></div></div>
-      <div class="widget-preview"><strong>Review widget</strong><span>Public review page is live. Next: embeddable review feed and API credentials.</span></div>
+      <div class="widget-preview">
+        <strong>Review widget</strong>
+        <span>Copy this embed code into your website to display approved StarPlusAI reviews.</span>
+        <textarea id="widgetCode" class="widget-code" readonly></textarea>
+        <button id="copyWidgetBtn" class="button secondary" type="button">Copy widget code</button>
+      </div>
     </section>
   </section>
 </main>
@@ -165,6 +170,9 @@ async function loadDashboard(user) {
     .select('name,plan,subscription_status').eq('id', user.id).maybeSingle();
   if (businessError || !business) return toast('We could not load your business profile.', 'error');
   $('welcome').textContent = 'Welcome, ' + business.name;
+  const widgetCode = '<div id="starplusai-reviews"></div>\\n' +
+    '<script src="' + window.location.origin + '/widget.js" data-business-id="' + currentUser.id + '" data-target="starplusai-reviews"></script>';
+  $('widgetCode').value = widgetCode;
   $('plan').textContent = business.plan === 'trial' ? 'Trial' : business.plan[0].toUpperCase()+business.plan.slice(1);
 
   const [customers, requests, reviews] = await Promise.all([
@@ -305,6 +313,14 @@ $('requestForm').addEventListener('submit',async e=>{
 });
 
 $('reviewFilter').addEventListener('change',renderReviews);
+$('copyWidgetBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText($('widgetCode').value);
+    toast('Widget code copied.');
+  } catch {
+    window.prompt('Copy this widget code:', $('widgetCode').value);
+  }
+});
 
 db.auth.onAuthStateChange(async (event,session)=>{
   if(event==='PASSWORD_RECOVERY') setAuthMode('newPassword');
