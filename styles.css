@@ -14,3 +14,5 @@
 
 .turnstile-widget{display:block;width:100%;min-height:65px;margin:2px 0 4px;overflow:visible}
 .cf-turnstile{display:flex;justify-content:flex-start}
+
+.trial-banner{margin-top:14px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:.9rem}.trial-active{background:#eaf7ee;color:#176b3a;border:1px solid #bfe4ca}.trial-ended{background:#fff1f1;color:#a61b1b;border:1px solid #f0bcbc}
