@@ -303,7 +303,7 @@ $('loginForm').addEventListener('submit', async e => {
 
 $('resetForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const {error}=await db.auth.resetPasswordForEmail($('resetEmail').value.trim(),{redirectTo:window.location.origin+window.location.pathname});
+  const {error}=await db.auth.resetPasswordForEmail($('resetEmail').value.trim(),{redirectTo:'https://starplussai.netlify.app/app.html'});
   if(error) return toast(error.message,'error'); toast('Password reset link sent. Check your email.');
 });
 
