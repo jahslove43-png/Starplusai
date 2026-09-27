@@ -60,7 +60,7 @@
     <div class="dashboard-heading">
       <div>
         <span class="eyebrow">Business dashboard</span>
-        <h1 id="welcome">Welcome to StarPlusAI</h1>
+        <h1 id="welcome">Welcome to StarPlusAI</h1><div id="trialBanner" class="trial-banner hidden" role="status"></div>
         <p>Collect customer feedback, monitor reviews and turn positive experiences into visible trust.</p>
       </div>
       <button id="quickAddBtn" class="button primary">+ Add customer</button>
@@ -213,13 +213,29 @@ async function loadDashboard(user, isLogin=false) {
   await markUserActivity(user,isLogin);
   if(isLogin || !sessionStorage.getItem('starplusai_welcome_checked')){sessionStorage.setItem('starplusai_welcome_checked','1');requestWelcomeEmail();}
   const { data: business, error: businessError } = await db.from('businesses')
-    .select('name,plan,subscription_status').eq('id', user.id).maybeSingle();
+    .select('name,plan,subscription_status,trial_ends_at').eq('id', user.id).maybeSingle();
   if (businessError || !business) return toast('We could not load your business profile.', 'error');
   $('welcome').textContent = 'Welcome, ' + business.name;
   const widgetCode = '<div id="starplusai-reviews"></div>\\n' +
     '<script src="' + window.location.origin + '/widget.js" data-business-id="' + currentUser.id + '" data-target="starplusai-reviews"></script>';
   $('widgetCode').value = widgetCode;
   $('plan').textContent = business.plan === 'trial' ? 'Trial' : business.plan[0].toUpperCase()+business.plan.slice(1);
+  if (business.plan === 'trial' && business.trial_ends_at) {
+    const ends = new Date(business.trial_ends_at);
+    const remainingMs = ends.getTime() - Date.now();
+    const banner = $('trialBanner');
+    if (remainingMs <= 0) {
+      banner.textContent = 'Your 3-day trial has ended. Choose a paid plan to continue using StarPlusAI.';
+      banner.classList.remove('hidden','trial-active');
+      banner.classList.add('trial-ended');
+      document.querySelectorAll('#customerPanel button, #customerPanel input, #customerPanel select, #requestBtn, #requestForm button, #requestForm select').forEach(el=>{el.disabled=true});
+    } else {
+      const days = Math.ceil(remainingMs / 86400000);
+      banner.textContent = 'Your 3-day free trial is active — ' + days + (days === 1 ? ' day' : ' days') + ' remaining.';
+      banner.classList.remove('hidden','trial-ended');
+      banner.classList.add('trial-active');
+    }
+  }
 
   const [customers, requests, reviews] = await Promise.all([
     db.from('customers').select('id,name,email,phone,created_at').eq('business_id',user.id).order('created_at',{ascending:false}),
