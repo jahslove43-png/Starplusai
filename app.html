@@ -144,9 +144,17 @@ window.appTurnstileSuccess=(token,action)=>{turnstileTokens[action]=token};
 window.appTurnstileExpired=(action)=>{turnstileTokens[action]=""};
 window.appTurnstileError=(action)=>{turnstileTokens[action]=""};
 function renderAppTurnstile(action,elementId){
-  const el=$(elementId); if(!el||!window.turnstile)return;
-  if(turnstileWidgets[action]!=null)window.turnstile.remove(turnstileWidgets[action]);
-  turnstileWidgets[action]=window.turnstile.render(el,{sitekey:TURNSTILE_SITE_KEY,callback:(token)=>window.appTurnstileSuccess(token,action),expiredCallback:()=>window.appTurnstileExpired(action),errorCallback:()=>window.appTurnstileError(action),theme:"auto"});
+  const el=$(elementId);
+  if(!el)return;
+  if(!window.turnstile){setTimeout(()=>renderAppTurnstile(action,elementId),250);return}
+  window.turnstile.ready(()=>{
+    if(turnstileWidgets[action]!=null){
+      try{window.turnstile.remove(turnstileWidgets[action])}catch{}
+      turnstileWidgets[action]=null;
+      turnstileTokens[action]="";
+    }
+    turnstileWidgets[action]=window.turnstile.render(el,{sitekey:TURNSTILE_SITE_KEY,callback:(token)=>window.appTurnstileSuccess(token,action),expiredCallback:()=>window.appTurnstileExpired(action),errorCallback:()=>window.appTurnstileError(action),theme:"auto"});
+  });
 }
 function resetAppTurnstile(action){
   turnstileTokens[action]="";
