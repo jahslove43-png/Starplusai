@@ -28,14 +28,15 @@
       <p id="authSubtitle">Log in to your review-management workspace.</p>
       <form id="loginForm" class="auth-form">
         <label>Email<input id="loginEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-        <label>Password<input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Your password"></label>
+        <label>Password<div class="password-wrap"><input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Your password"><button class="password-toggle" type="button" data-password-toggle="loginPassword" aria-label="Show password" aria-pressed="false">👁</button></div></label>
         <div id="appTurnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
         <button class="button primary full" type="submit">Log in</button>
       </form>
       <form id="signupForm" class="auth-form hidden">
         <label>Business name<input id="businessName" type="text" required autocomplete="organization" placeholder="Your business"></label>
         <label>Email<input id="signupEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-        <label>Password<input id="signupPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
+        <label>Password<div class="password-wrap"><input id="signupPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"><button class="password-toggle" type="button" data-password-toggle="signupPassword" aria-label="Show password" aria-pressed="false">👁</button></div></label>
+<div id="appVerificationNotice" class="verification-notice hidden" aria-live="polite"><strong>Verify your email to activate your account</strong><span>After you create your account, StarPlusAI will send a verification email to <span id="appVerificationEmail" class="verify-email"></span>.</span><span class="muted">Open the email and click the verification link before logging in. Check your spam/junk folder if you do not see it.</span><button id="appResendVerification" type="button" class="text-button">Resend verification email</button></div>
         <div id="appSignupTurnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
         <button class="button primary full" type="submit">Create account</button>
       </form>
@@ -135,6 +136,7 @@ const SUPABASE_URL = 'https://rxebfyhoojuyasddkqyr.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_LUBsZv3T2XUey0jZ5BI4vw_6shsxEfg';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
+document.querySelectorAll("[data-password-toggle]").forEach(btn=>{btn.addEventListener("click",()=>{const input=document.getElementById(btn.dataset.passwordToggle);const showing=input.type==="text";input.type=showing?"password":"text";btn.textContent=showing?"👁":"🙈";btn.setAttribute("aria-label",showing?"Show password":"Hide password");btn.setAttribute("aria-pressed",String(!showing));});});
 let currentUser = null;
 let currentReviews = [];
 const TURNSTILE_SITE_KEY="0x4AAAAAAFFE1nC5af_a6XmH";
@@ -187,6 +189,7 @@ const hide = id => $(id).classList.add('hidden');
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function setAuthMode(mode) {
+  if($('appVerificationNotice')) hide('appVerificationNotice');
   hide('loginForm'); hide('signupForm'); hide('resetForm'); hide('newPasswordForm');
   show('authLinks'); hide('showSignup'); hide('showLogin'); show('showReset');
   if (mode === 'signup') {
@@ -336,14 +339,14 @@ $('signupForm').addEventListener('submit', async e => {
   if(error) return toast(error.message,'error');
   if(!data.user) return toast('Account could not be created. Please try again.','error');
   if(data.session) { toast('Account created successfully.'); await loadDashboard(data.user); }
-  else { toast('Account created. Check your email to confirm, then log in.'); setAuthMode('login'); }
+  else { $('appVerificationEmail').textContent=email; setAuthMode('login'); show('appVerificationNotice'); toast('Account created. Verification email sent. Check your inbox.'); }
 });
 
 $('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
   if(!turnstileTokens.login) return toast('Complete the security verification first.','error');
   const {data,error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value,captchaToken:turnstileTokens.login});
-  if(error) return toast('Login failed: '+error.message,'error');
+  if(error){if(/confirm|verified/i.test(error.message||"")){ $('appVerificationEmail').textContent=$('loginEmail').value.trim(); show('appVerificationNotice'); } return toast('Login failed: '+error.message,'error');}
   toast('Logged in successfully.'); await loadDashboard(data.user,true);
 });
 
@@ -361,6 +364,7 @@ $('newPasswordForm').addEventListener('submit', async e => {
   toast('Password updated successfully.'); setAuthMode('login');
 });
 
+$('appResendVerification').addEventListener('click',async()=>{const email=$('appVerificationEmail').textContent.trim()||$('loginEmail').value.trim()||$('signupEmail').value.trim();if(!email)return toast('Enter your email first.','error');if(!turnstileTokens.login&&!turnstileTokens.signup)return toast('Complete the security verification first.','error');const captchaToken=turnstileTokens.login||turnstileTokens.signup;const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:'https://starplussai.netlify.app/app.html',captchaToken}});if(error)return toast(error.message,'error');toast('A new verification email has been sent.');});
 $('showSignup').addEventListener('click',()=>setAuthMode('signup'));
 $('showLogin').addEventListener('click',()=>setAuthMode('login'));
 $('showReset').addEventListener('click',()=>setAuthMode('reset'));
