@@ -7,6 +7,7 @@
   <title>StarPlusAI — Account & Dashboard</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -28,16 +29,19 @@
       <form id="loginForm" class="auth-form">
         <label>Email<input id="loginEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
         <label>Password<input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Your password"></label>
+        <div id="appTurnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
         <button class="button primary full" type="submit">Log in</button>
       </form>
       <form id="signupForm" class="auth-form hidden">
         <label>Business name<input id="businessName" type="text" required autocomplete="organization" placeholder="Your business"></label>
         <label>Email<input id="signupEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
         <label>Password<input id="signupPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
+        <div id="appSignupTurnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
         <button class="button primary full" type="submit">Create account</button>
       </form>
       <form id="resetForm" class="auth-form hidden">
         <label>Email<input id="resetEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+        <div id="appResetTurnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
         <button class="button primary full" type="submit">Send reset link</button>
       </form>
       <form id="newPasswordForm" class="auth-form hidden">
@@ -133,6 +137,22 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
 let currentUser = null;
 let currentReviews = [];
+const TURNSTILE_SITE_KEY="0x4AAAAAAFFE1nC5af_a6XmH";
+const turnstileTokens={login:"",signup:"",reset:""};
+const turnstileWidgets={};
+window.appTurnstileSuccess=(token,action)=>{turnstileTokens[action]=token};
+window.appTurnstileExpired=(action)=>{turnstileTokens[action]=""};
+window.appTurnstileError=(action)=>{turnstileTokens[action]=""};
+function renderAppTurnstile(action,elementId){
+  const el=$(elementId); if(!el||!window.turnstile)return;
+  if(turnstileWidgets[action]!=null)window.turnstile.remove(turnstileWidgets[action]);
+  turnstileWidgets[action]=window.turnstile.render(el,{sitekey:TURNSTILE_SITE_KEY,callback:(token)=>window.appTurnstileSuccess(token,action),expiredCallback:()=>window.appTurnstileExpired(action),errorCallback:()=>window.appTurnstileError(action),theme:"auto"});
+}
+function resetAppTurnstile(action){
+  turnstileTokens[action]="";
+  if(window.turnstile&&turnstileWidgets[action]!=null)window.turnstile.reset(turnstileWidgets[action]);
+}
+
 
 async function markUserActivity(user, isLogin=false){
   if(!user?.id) return;
@@ -162,11 +182,11 @@ function setAuthMode(mode) {
   hide('loginForm'); hide('signupForm'); hide('resetForm'); hide('newPasswordForm');
   show('authLinks'); hide('showSignup'); hide('showLogin'); show('showReset');
   if (mode === 'signup') {
-    show('signupForm'); show('showLogin');
+    show('signupForm'); show('showLogin'); setTimeout(()=>renderAppTurnstile('signup','appSignupTurnstileWidget'),50);
     $('authTitle').textContent='Create your account';
     $('authSubtitle').textContent='Start your review-management workspace.';
   } else if (mode === 'reset') {
-    show('resetForm'); show('showLogin');
+    show('resetForm'); show('showLogin'); setTimeout(()=>renderAppTurnstile('reset','appResetTurnstileWidget'),50);
     $('authTitle').textContent='Reset your password';
     $('authSubtitle').textContent='We will email you a secure password-reset link.';
   } else if (mode === 'newPassword') {
@@ -174,7 +194,7 @@ function setAuthMode(mode) {
     $('authTitle').textContent='Choose a new password';
     $('authSubtitle').textContent='Set a new password for your StarPlusAI account.';
   } else {
-    show('loginForm'); show('showSignup');
+    show('loginForm'); show('showSignup'); setTimeout(()=>renderAppTurnstile('login','appTurnstileWidget'),50);
     $('authTitle').textContent='Welcome back';
     $('authSubtitle').textContent='Log in to your review-management workspace.';
   }
@@ -286,8 +306,9 @@ function populateRequestCustomers(rows) {
 $('signupForm').addEventListener('submit', async e => {
   e.preventDefault();
   const businessName=$('businessName').value.trim(), email=$('signupEmail').value.trim(), password=$('signupPassword').value;
+  if(!turnstileTokens.signup) return toast('Complete the security verification first.','error');
   if(password.length < 8) return toast('Password must be at least 8 characters.', 'error');
-  const { data, error } = await db.auth.signUp({email,password,options:{data:{business_name:businessName}}});
+  const { data, error } = await db.auth.signUp({email,password,options:{captchaToken:turnstileTokens.signup,data:{business_name:businessName}}});
   if(error) return toast(error.message,'error');
   if(!data.user) return toast('Account could not be created. Please try again.','error');
   if(data.session) { toast('Account created successfully.'); await loadDashboard(data.user); }
@@ -296,14 +317,16 @@ $('signupForm').addEventListener('submit', async e => {
 
 $('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const {data,error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});
+  if(!turnstileTokens.login) return toast('Complete the security verification first.','error');
+  const {data,error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value,captchaToken:turnstileTokens.login});
   if(error) return toast('Login failed: '+error.message,'error');
   toast('Logged in successfully.'); await loadDashboard(data.user,true);
 });
 
 $('resetForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const {error}=await db.auth.resetPasswordForEmail($('resetEmail').value.trim(),{redirectTo:'https://starplussai.netlify.app/app.html'});
+  if(!turnstileTokens.reset) return toast('Complete the security verification first.','error');
+  const {error}=await db.auth.resetPasswordForEmail($('resetEmail').value.trim(),{redirectTo:'https://starplussai.netlify.app/app.html',captchaToken:turnstileTokens.reset});
   if(error) return toast(error.message,'error'); toast('Password reset link sent. Check your email.');
 });
 
