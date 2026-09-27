@@ -11,3 +11,6 @@
 .signup-checks span{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;border-radius:50%;background:#d1d5db;color:#fff;font-weight:700;font-size:11px}
 .signup-checks .ok{color:#166534}
 .signup-checks .ok span{background:#16a34a}
+
+.turnstile-widget{display:block;width:100%;min-height:65px;margin:2px 0 4px;overflow:visible}
+.cf-turnstile{display:flex;justify-content:flex-start}
