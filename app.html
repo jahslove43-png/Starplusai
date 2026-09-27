@@ -134,6 +134,22 @@ const $ = id => document.getElementById(id);
 let currentUser = null;
 let currentReviews = [];
 
+async function markUserActivity(user, isLogin=false){
+  if(!user?.id) return;
+  const now=new Date().toISOString();
+  const payload={last_activity_at:now};
+  if(isLogin) payload.last_login_at=now;
+  try{await db.from('businesses').update(payload).eq('id',user.id)}catch{}
+}
+
+async function requestWelcomeEmail(){
+  try{
+    const {data:{session}}=await db.auth.getSession();
+    if(!session?.access_token) return;
+    await fetch(SUPABASE_URL+'/functions/v1/send-welcome-email',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:SUPABASE_KEY,'Content-Type':'application/json'}});
+  }catch{}
+}
+
 const toast = (message, type='success') => {
   const el = $('toast'); el.textContent = message; el.className = 'toast ' + type + ' show';
   clearTimeout(window.toastTimer); window.toastTimer = setTimeout(() => el.classList.remove('show'), 4200);
@@ -164,8 +180,10 @@ function setAuthMode(mode) {
   }
 }
 
-async function loadDashboard(user) {
+async function loadDashboard(user, isLogin=false) {
   currentUser = user; hide('authView'); show('dashboardView'); show('logoutBtn');
+  await markUserActivity(user,isLogin);
+  if(isLogin || !sessionStorage.getItem('starplusai_welcome_checked')){sessionStorage.setItem('starplusai_welcome_checked','1');requestWelcomeEmail();}
   const { data: business, error: businessError } = await db.from('businesses')
     .select('name,plan,subscription_status').eq('id', user.id).maybeSingle();
   if (businessError || !business) return toast('We could not load your business profile.', 'error');
@@ -280,7 +298,7 @@ $('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
   const {data,error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});
   if(error) return toast('Login failed: '+error.message,'error');
-  toast('Logged in successfully.'); await loadDashboard(data.user);
+  toast('Logged in successfully.'); await loadDashboard(data.user,true);
 });
 
 $('resetForm').addEventListener('submit', async e => {
