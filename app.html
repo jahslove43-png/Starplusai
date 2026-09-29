@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-</head>
+  <link rel="stylesheet" href="starplusai-agent.css">\n</head>
 <body>
 <header class="site-header">
   <a class="logo" href="index.html">StarPlusAI</a>
@@ -423,5 +423,5 @@ db.auth.onAuthStateChange(async (event,session)=>{
   if(data.session) await loadDashboard(data.session.user);
 })();
 </script>
-</body>
+  <script src="starplusai-agent.js" defer></script>\n</body>
 </html>
