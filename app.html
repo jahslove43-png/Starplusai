@@ -195,7 +195,7 @@ function setAuthMode(mode) {
   if (mode === 'signup') {
     show('signupForm'); show('showLogin'); setTimeout(()=>renderAppTurnstile('signup','appSignupTurnstileWidget'),50);
     $('authTitle').textContent='Create your account';
-    $('authSubtitle').textContent='Start your review-management workspace.';
+    $('authSubtitle').textContent='Start your 3-day free trial and review-management workspace.';
   } else if (mode === 'reset') {
     show('resetForm'); show('showLogin'); setTimeout(()=>renderAppTurnstile('reset','appResetTurnstileWidget'),50);
     $('authTitle').textContent='Reset your password';
