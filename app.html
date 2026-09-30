@@ -346,7 +346,7 @@ function buildWidgetCode(){
   const dark=$('widgetDark')?.checked||localStorage.getItem('sp_widget_dark')==='true';
   const radius=$('widgetRadius')?.value||localStorage.getItem('sp_widget_radius')||'18';
   const ai=$('widgetAiSummary')?.checked!==false && localStorage.getItem('sp_widget_ai')!=='false';
-  return '<div id="starplusai-reviews"></div>\\n<script src="'+window.location.origin+'/widget.js" data-business-id="'+currentUser.id+'" data-target="starplusai-reviews" data-layout="'+layout+'" data-color="'+color+'" data-dark="'+dark+'" data-radius="'+radius+'" data-ai-summary="'+ai+'"></script>';
+  return '<div id="starplusai-reviews"></div>\\n'+'<'+'script src="'+window.location.origin+'/widget.js" data-business-id="'+currentUser.id+'" data-target="starplusai-reviews" data-layout="'+layout+'" data-color="'+color+'" data-dark="'+dark+'" data-radius="'+radius+'" data-ai-summary="'+ai+'"></'+'script>';
 }
 function populateCustomerSelectors(rows){
   const opts='<option value="">Choose a customer</option>'+rows.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.name)+(c.phone?' — '+esc(c.phone):'')+'</option>').join('');
@@ -394,15 +394,23 @@ async function draftAIResponse(id){
   let box=card.querySelector('.ai-response');if(!box){box=document.createElement('div');box.className='ai-response';box.innerHTML='<div class="ai-chip">✦ AI DRAFT</div><textarea class="sp-input mt-2" readonly>Generating…</textarea><div class="flex gap-2 mt-2"><button class="sp-btn sp-secondary px-3 py-2 text-xs ai-copy">Copy</button><button class="sp-btn sp-primary px-3 py-2 text-xs ai-use">Use as response</button></div>';card.appendChild(box);}
   const ta=box.querySelector('textarea');try{const reply=await aiCall('Draft a concise professional business reply to this customer review. For 4-5 stars, thank them specifically. For 1-3 stars, acknowledge the concern, apologize where appropriate, and offer a constructive next step. Never argue or invent facts. Review: '+JSON.stringify({rating:r.rating,comment:r.comment}));ta.value=reply;box.querySelector('.ai-copy').onclick=async()=>{await navigator.clipboard.writeText(ta.value);toast('AI response copied.');};box.querySelector('.ai-use').onclick=()=>{ta.readOnly=false;ta.focus();toast('Edit the draft, then paste it into your response channel.');};}catch(e){ta.value=e.message;toast(e.message,'error');}
 }
-function generateQr(){
+async function generateQr(){
   const id=$('qrCustomer').value;if(!id)return toast('Choose a customer first.','error');
-  const opt=$('qrCustomer').selectedOptions[0], token='customer-'+id;
-  const url=new URL('review.html',window.location.href);url.searchParams.set('customer',id);
+  const opt=$('qrCustomer').selectedOptions[0];
+  const existing=await db.from('review_requests').select('public_token').eq('business_id',currentUser.id).eq('customer_id',id).order('created_at',{ascending:false}).limit(1).maybeSingle();
+  let token=existing.data?.public_token;
+  if(!token){const expiresAt=new Date(Date.now()+30*24*60*60*1000).toISOString();const created=await db.from('review_requests').insert({business_id:currentUser.id,customer_id:id,status:'pending',expires_at:expiresAt}).select('public_token').single();if(created.error)return toast(created.error.message,'error');token=created.data.public_token;}
+  const url=new URL('review.html',window.location.href);url.searchParams.set('token',token);
   $('qrResult').innerHTML='<div class="qr-box"><canvas id="qrCanvas"></canvas></div><div class="text-xs text-slate-400 mt-2">'+esc(opt.text)+'</div><button id="downloadQr" class="sp-btn sp-secondary px-3 py-2 text-xs mt-2">Download QR</button>';
-  QRCode.toCanvas($('qrCanvas'),url.href,{width:220,margin:2},()=>{});$('downloadQr').onclick=()=>{const a=document.createElement('a');a.download='starplusai-review-qr.png';a.href=$('qrCanvas').toDataURL('image/png');a.click();};
+  QRCode.toCanvas($('qrCanvas'),url.href,{width:220,margin:2},()=>{});$('downloadQr').onclick=()=>{const a=document.createElement('a');a.download='starplusai-review-qr.png';a.href=$('qrCanvas').toDataURL('image/png');a.click();};await loadDashboard(currentUser);
 }
-function openWhatsApp(){
-  const id=$('waCustomer').value;if(!id)return toast('Choose a customer first.','error');const opt=$('waCustomer').selectedOptions[0];const url=new URL('review.html',window.location.href);url.searchParams.set('customer',id);const msg='Hi '+opt.text.split(' — ')[0]+', we would love your feedback. Please share your review here: '+url.href;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank','noopener');}
+async function openWhatsApp(){
+  const id=$('waCustomer').value;if(!id)return toast('Choose a customer first.','error');const opt=$('waCustomer').selectedOptions[0];
+  const existing=await db.from('review_requests').select('public_token').eq('business_id',currentUser.id).eq('customer_id',id).order('created_at',{ascending:false}).limit(1).maybeSingle();
+  let token=existing.data?.public_token;
+  if(!token){const expiresAt=new Date(Date.now()+30*24*60*60*1000).toISOString();const created=await db.from('review_requests').insert({business_id:currentUser.id,customer_id:id,status:'pending',expires_at:expiresAt}).select('public_token').single();if(created.error)return toast(created.error.message,'error');token=created.data.public_token;}
+  const url=new URL('review.html',window.location.href);url.searchParams.set('token',token);const msg='Hi '+opt.text.split(' — ')[0]+', we would love your feedback. Please share your review here: '+url.href;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank','noopener');await loadDashboard(currentUser);
+}
 function exportSocialGraphic(){
   const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1080;const ctx=canvas.getContext('2d');ctx.fillStyle=$('widgetColor').value;ctx.fillRect(0,0,1080,1080);ctx.fillStyle='#fff';ctx.font='bold 56px Inter, sans-serif';ctx.fillText('★★★★★',80,170);ctx.font='700 44px Inter, sans-serif';const text=$('widgetSummary').value||'Customers trust businesses that listen.';const words=text.split(' ');let line='',y=310;for(const w of words){const test=line?line+' '+w:w;if(ctx.measureText(test).width>880){ctx.fillText(line,80,y);y+=62;line=w}else line=test}if(line)ctx.fillText(line,80,y);ctx.font='600 34px Inter, sans-serif';ctx.fillText('Powered by StarPlusAI',80,940);const a=document.createElement('a');a.download='starplusai-social-proof.png';a.href=canvas.toDataURL('image/png');a.click();toast('Social proof graphic exported.');}
 $('signupForm').addEventListener('submit', async e => {
