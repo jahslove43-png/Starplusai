@@ -220,7 +220,7 @@ async function loadDashboard(user, isLogin=false) {
   if (businessError || !business) return toast('We could not load your business profile.', 'error');
   $('welcome').textContent = 'Welcome, ' + business.name;
   const widgetCode = '<div id="starplusai-reviews"></div>\\n' +
-    '<script src="' + window.location.origin + '/widget.js" data-business-id="' + currentUser.id + '" data-target="starplusai-reviews"></script>';
+    '<' + 'script src="' + window.location.origin + '/widget.js" data-business-id="' + currentUser.id + '" data-target="starplusai-reviews"></' + 'script>';
   $('widgetCode').value = widgetCode;
   $('plan').textContent = business.plan === 'trial' ? 'Trial' : business.plan[0].toUpperCase()+business.plan.slice(1);
   if (business.plan === 'trial' && business.trial_ends_at) {
