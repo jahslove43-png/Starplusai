@@ -283,12 +283,12 @@ async function sendReviewEmail(requestId) {
   await loadDashboard(currentUser);
 }
 function renderRequests(rows) {
-  $('requestRows').innerHTML = rows.length ? rows.map(r => \`<tr>
-    <td>\${esc(r.customers?.name || r.customers?.email || 'Customer')}</td>
-    <td><span class="status-badge \${esc(r.status)}">\${esc(r.status)}</span></td>
-    <td>\${new Date(r.created_at).toLocaleString()}</td>
-    <td>\${r.public_token ? '<button class="text-button copy-request" data-token="' + esc(r.public_token) + '">Copy link</button> <button class="text-button send-request" data-id="' + esc(r.id) + '">Send email</button>' : '—'}</td>
-  </tr>\`).join('') : '<tr><td colspan="4">No review requests yet.</td></tr>';
+  $('requestRows').innerHTML = rows.length ? rows.map(r => `<tr>
+    <td>${esc(r.customers?.name || r.customers?.email || 'Customer')}</td>
+    <td><span class="status-badge ${esc(r.status)}">${esc(r.status)}</span></td>
+    <td>${new Date(r.created_at).toLocaleString()}</td>
+    <td>${r.public_token ? '<button class="text-button copy-request" data-token="' + esc(r.public_token) + '">Copy link</button> <button class="text-button send-request" data-id="' + esc(r.id) + '">Send email</button>' : '—'}</td>
+  </tr>`).join('') : '<tr><td colspan="4">No review requests yet.</td></tr>';
   document.querySelectorAll('.copy-request').forEach(btn => btn.addEventListener('click', async () => {
     const url = new URL('review.html', window.location.href);
     url.searchParams.set('token', btn.dataset.token);
