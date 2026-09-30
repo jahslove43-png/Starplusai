@@ -1,137 +1,100 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="h-full bg-slate-950">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta name="description" content="StarPlusAI business dashboard and account access.">
-  <title>StarPlusAI — Account & Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="StarPlusAI business dashboard.">
+<title>StarPlusAI — Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-  <link rel="stylesheet" href="starplusai-agent.css">\n</head>
-<body>
-<header class="site-header">
-  <a class="logo" href="index.html">StarPlusAI</a>
-  <div class="header-actions">
-    <a class="nav-button" href="index.html">Back to site</a>
-    <button id="logoutBtn" class="button secondary hidden">Log out</button>
-  </div>
+<link rel="stylesheet" href="starplusai-agent.css">
+<style>
+*{box-sizing:border-box}body{font-family:Inter,sans-serif;background:#020617;color:#f8fafc}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-track{background:#020617}::-webkit-scrollbar-thumb{background:#334155;border-radius:8px}
+.sp-card{background:rgba(15,23,42,.82);border:1px solid #1e293b;box-shadow:0 20px 55px rgba(0,0,0,.22)}
+.sp-card:hover{border-color:#334155}
+.sp-input{background:#020617;border:1px solid #334155;color:#f8fafc;border-radius:12px;padding:12px 14px;outline:none;width:100%}
+.sp-input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+.sp-btn{border-radius:12px;font-weight:700;transition:.2s}.sp-btn:hover{transform:translateY(-1px)}
+.sp-primary{background:#4f46e5;color:#fff}.sp-primary:hover{background:#6366f1}
+.sp-secondary{background:#111827;color:#cbd5e1;border:1px solid #334155}
+.sp-muted{color:#94a3b8}
+.sp-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#64748b}
+.sp-table{width:100%;border-collapse:collapse}.sp-table th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;text-align:left;padding:12px;border-bottom:1px solid #1e293b}.sp-table td{padding:15px 12px;border-bottom:1px solid #172033;color:#cbd5e1}.sp-table tr:last-child td{border-bottom:0}
+.sp-nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;color:#94a3b8;font-size:13px;font-weight:600}.sp-nav-item:hover,.sp-nav-item.active{background:#111c31;color:#fff}.sp-nav-item.active{box-shadow:inset 2px 0 #6366f1}
+.sp-stat{position:relative;overflow:hidden}.sp-stat:after{content:"";position:absolute;right:-30px;top:-40px;width:110px;height:110px;border-radius:50%;background:rgba(99,102,241,.08)}
+@media(max-width:900px){.sp-sidebar{display:none}.sp-main{margin-left:0!important}.sp-mobile-nav{display:flex!important}.sp-table-wrap{overflow-x:auto}.sp-table{min-width:650px}}
+</style>
+</head>
+<body class="min-h-full antialiased">
+<div id="toast" class="fixed right-4 top-4 z-[100] hidden rounded-xl px-4 py-3 text-sm font-semibold shadow-2xl" role="status" aria-live="polite"></div>
+
+<!-- AUTHENTICATION -->
+<main id="authView" class="min-h-screen grid place-items-center p-5 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,.16),transparent_35rem)]">
+<div class="w-full max-w-md sp-card rounded-3xl p-7 sm:p-9">
+<div class="flex items-center gap-3 mb-8"><div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 grid place-items-center shadow-lg shadow-indigo-500/25">✦</div><span class="font-extrabold text-xl">StarPlus<span class="text-indigo-400">AI</span></span></div>
+<span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Business workspace</span>
+<h1 id="authTitle" class="text-3xl font-extrabold tracking-tight mt-2">Welcome back</h1><p id="authSubtitle" class="sp-muted mt-2">Log in to your review-management workspace.</p>
+<form id="loginForm" class="space-y-4 mt-7"><label class="block text-sm font-semibold text-slate-300">Email<input id="loginEmail" class="sp-input mt-2" type="email" required autocomplete="email" placeholder="you@example.com"></label><label class="block text-sm font-semibold text-slate-300">Password<div class="relative"><input id="loginPassword" class="sp-input mt-2 pr-12" type="password" required autocomplete="current-password" placeholder="Your password"><button class="absolute right-3 top-4 text-slate-500" type="button" data-password-toggle="loginPassword">👁</button></div></label><div id="appTurnstileWidget" class="turnstile-widget"></div><button class="sp-btn sp-primary w-full py-3.5" type="submit">Log in</button></form>
+<form id="signupForm" class="auth-form hidden space-y-4 mt-7"><label class="block text-sm font-semibold text-slate-300">Business name<input id="businessName" class="sp-input mt-2" type="text" required placeholder="Your business"></label><label class="block text-sm font-semibold text-slate-300">Email<input id="signupEmail" class="sp-input mt-2" type="email" required placeholder="you@example.com"></label><label class="block text-sm font-semibold text-slate-300">Password<input id="signupPassword" class="sp-input mt-2" type="password" required minlength="8" placeholder="At least 8 characters"></label><div id="appVerificationNotice" class="hidden text-sm rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-200"><strong>Verify your email to activate your account</strong><span class="block mt-1">Verification email sent to <span id="appVerificationEmail"></span>.</span><button id="appResendVerification" type="button" class="text-indigo-300 mt-2">Resend verification email</button></div><div id="appSignupTurnstileWidget"></div><button class="sp-btn sp-primary w-full py-3.5" type="submit">Create account</button></form>
+<form id="resetForm" class="hidden space-y-4 mt-7"><label class="block text-sm font-semibold text-slate-300">Email<input id="resetEmail" class="sp-input mt-2" type="email" required placeholder="you@example.com"></label><div id="appResetTurnstileWidget"></div><button class="sp-btn sp-primary w-full py-3.5" type="submit">Send reset link</button></form>
+<form id="newPasswordForm" class="hidden space-y-4 mt-7"><label class="block text-sm font-semibold text-slate-300">New password<input id="newPassword" class="sp-input mt-2" type="password" required minlength="8"></label><button class="sp-btn sp-primary w-full py-3.5" type="submit">Update password</button></form>
+<div id="authLinks" class="mt-6 flex flex-col gap-2 text-sm"><button id="showSignup" type="button" class="text-indigo-300 text-left">Need an account? Create one</button><button id="showLogin" type="button" class="text-indigo-300 text-left hidden">Already have an account? Log in</button><button id="showReset" type="button" class="text-slate-400 text-left">Forgot your password?</button></div>
+</div></main>
+
+<!-- NEW DASHBOARD -->
+<div id="dashboardView" class="hidden min-h-screen">
+<aside class="sp-sidebar fixed inset-y-0 left-0 z-40 w-64 border-r border-slate-800 bg-slate-950/95 p-4">
+<div class="flex items-center gap-3 px-2 py-3 mb-7"><div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 grid place-items-center">✦</div><span class="font-extrabold text-lg">StarPlus<span class="text-indigo-400">AI</span></span></div>
+<nav class="space-y-1">
+<a href="#overview" class="sp-nav-item active">▦ <span>Overview</span></a><a href="#customers" class="sp-nav-item">♙ <span>Customers</span></a><a href="#requests" class="sp-nav-item">↗ <span>Review Requests</span></a><a href="#reviews" class="sp-nav-item">★ <span>Incoming Reviews</span></a><a href="#widget" class="sp-nav-item">◈ <span>Widget & API</span></a>
+</nav>
+<div class="absolute bottom-4 left-4 right-4 sp-card rounded-2xl p-4"><div class="sp-label">Workspace</div><div id="sidePlan" class="text-sm font-bold mt-1">Trial</div><div class="h-1.5 rounded-full bg-slate-800 mt-3 overflow-hidden"><div class="h-full bg-indigo-500 w-1/3"></div></div><a href="index.html" class="block text-xs text-slate-400 mt-3 hover:text-white">← Back to website</a></div>
+</aside>
+<div class="sp-main ml-64 min-h-screen">
+<header class="h-16 sticky top-0 z-30 border-b border-slate-800 bg-slate-950/85 backdrop-blur-xl px-5 lg:px-8 flex items-center justify-between">
+<div><span class="sp-label">Business workspace</span><div id="topBusinessName" class="font-semibold text-sm">StarPlusAI</div></div>
+<div class="flex items-center gap-2"><a href="index.html" class="hidden sm:inline-flex sp-btn sp-secondary px-3 py-2 text-xs">View site</a><button id="logoutBtn" class="sp-btn sp-secondary px-3 py-2 text-xs">Log out</button></div>
 </header>
+<div class="p-5 lg:p-8 max-w-[1500px] mx-auto">
+<section id="overview" class="mb-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-5"><div><span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Overview</span><h1 id="welcome" class="text-3xl lg:text-4xl font-extrabold tracking-tight mt-1">Welcome to StarPlusAI</h1><p class="sp-muted mt-2">Your command center for customer feedback and social proof.</p><div id="trialBanner" class="hidden mt-4 rounded-xl px-4 py-3 text-sm font-semibold" role="status"></div></div><button id="quickAddBtn" class="sp-btn sp-primary px-5 py-3">+ Add customer</button></div>
+</section>
+<section class="grid grid-cols-2 xl:grid-cols-4 gap-3 lg:gap-5 mb-8">
+<div class="sp-card sp-stat rounded-2xl p-5"><div class="sp-label">Review requests</div><div id="requestCount" class="text-3xl font-extrabold mt-2">0</div><div class="text-xs sp-muted mt-1">Total created</div></div>
+<div class="sp-card sp-stat rounded-2xl p-5"><div class="sp-label">Total reviews</div><div id="reviewCount" class="text-3xl font-extrabold mt-2">0</div><div class="text-xs sp-muted mt-1">Customer feedback</div></div>
+<div class="sp-card sp-stat rounded-2xl p-5"><div class="sp-label">Average rating</div><div id="averageRating" class="text-3xl font-extrabold mt-2">—</div><div class="text-xs sp-muted mt-1">Approved reviews</div></div>
+<div class="sp-card sp-stat rounded-2xl p-5"><div class="sp-label">Current plan</div><div id="plan" class="text-3xl font-extrabold mt-2">Trial</div><div class="text-xs text-emerald-400 mt-1">3-day trial</div></div>
+</section>
 
-<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<section id="customers" class="sp-card rounded-2xl p-5 lg:p-6 mb-5">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><span class="sp-label">Audience</span><h2 class="text-xl font-bold mt-1">Customers</h2><p class="sp-muted text-sm mt-1">Add customers and request feedback from them.</p></div><button id="addCustomerBtn" class="sp-btn sp-secondary px-4 py-2 text-sm">Add customer</button></div>
+<form id="customerForm" class="hidden grid grid-cols-1 md:grid-cols-4 gap-2 mt-5"><input id="customerName" class="sp-input" required maxlength="120" placeholder="Customer name"><input id="customerEmail" class="sp-input" type="email" maxlength="254" placeholder="Customer email"><input id="customerPhone" class="sp-input" type="tel" maxlength="40" placeholder="Phone (optional)"><div class="flex gap-2"><button class="sp-btn sp-primary px-4 py-2" type="submit">Save</button><button id="cancelCustomer" class="sp-btn sp-secondary px-4" type="button">Cancel</button></div></form>
+<div class="sp-table-wrap mt-5"><table class="sp-table"><thead><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Action</th></tr></thead><tbody id="customerRows"><tr><td colspan="4">Loading customers…</td></tr></tbody></table></div>
+</section>
 
-<main class="app">
-  <section id="authView" class="auth-shell">
-    <div class="auth-card">
-      <span class="eyebrow">StarPlusAI account</span>
-      <h1 id="authTitle">Welcome back</h1>
-      <p id="authSubtitle">Log in to your review-management workspace.</p>
-      <form id="loginForm" class="auth-form">
-        <label>Email<input id="loginEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-        <label>Password<div class="password-wrap"><input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Your password"><button class="password-toggle" type="button" data-password-toggle="loginPassword" aria-label="Show password" aria-pressed="false">👁</button></div></label>
-        <div id="appTurnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
-        <button class="button primary full" type="submit">Log in</button>
-      </form>
-      <form id="signupForm" class="auth-form hidden">
-        <label>Business name<input id="businessName" type="text" required autocomplete="organization" placeholder="Your business"></label>
-        <label>Email<input id="signupEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-        <label>Password<div class="password-wrap"><input id="signupPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"><button class="password-toggle" type="button" data-password-toggle="signupPassword" aria-label="Show password" aria-pressed="false">👁</button></div></label>
-<div id="appVerificationNotice" class="verification-notice hidden" aria-live="polite"><strong>Verify your email to activate your account</strong><span>After you create your account, StarPlusAI will send a verification email to <span id="appVerificationEmail" class="verify-email"></span>.</span><span class="muted">Open the email and click the verification link before logging in. Check your spam/junk folder if you do not see it.</span><button id="appResendVerification" type="button" class="text-button">Resend verification email</button></div>
-        <div id="appSignupTurnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
-        <button class="button primary full" type="submit">Create account</button>
-      </form>
-      <form id="resetForm" class="auth-form hidden">
-        <label>Email<input id="resetEmail" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-        <div id="appResetTurnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
-        <button class="button primary full" type="submit">Send reset link</button>
-      </form>
-      <form id="newPasswordForm" class="auth-form hidden">
-        <label>New password<input id="newPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
-        <button class="button primary full" type="submit">Update password</button>
-      </form>
-      <div id="authLinks" class="auth-links">
-        <button id="showSignup" type="button" class="text-button">Need an account? Create one</button>
-        <button id="showLogin" type="button" class="text-button hidden">Already have an account? Log in</button>
-        <button id="showReset" type="button" class="text-button">Forgot your password?</button>
-      </div>
-    </div>
-  </section>
+<section id="requests" class="sp-card rounded-2xl p-5 lg:p-6 mb-5">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><span class="sp-label">Collection</span><h2 class="text-xl font-bold mt-1">Review requests</h2><p class="sp-muted text-sm mt-1">Create secure review links and send requests.</p></div><button id="requestBtn" class="sp-btn sp-primary px-4 py-2 text-sm">Send request</button></div>
+<form id="requestForm" class="hidden flex flex-col sm:flex-row gap-2 mt-5"><select id="requestCustomer" class="sp-input" required><option value="">Choose a customer</option></select><button class="sp-btn sp-primary px-4 py-2" type="submit">Create request</button><button id="cancelRequest" class="sp-btn sp-secondary px-4" type="button">Cancel</button></form>
+<div class="sp-table-wrap mt-5"><table class="sp-table"><thead><tr><th>Customer</th><th>Status</th><th>Created</th><th>Action</th></tr></thead><tbody id="requestRows"><tr><td colspan="4">Loading requests…</td></tr></tbody></table></div>
+</section>
 
-  <section id="dashboardView" class="hidden">
-    <div class="dashboard-heading">
-      <div>
-        <span class="eyebrow">Business dashboard</span>
-        <h1 id="welcome">Welcome to StarPlusAI</h1><div id="trialBanner" class="trial-banner hidden" role="status"></div>
-        <p>Collect customer feedback, monitor reviews and turn positive experiences into visible trust.</p>
-      </div>
-      <button id="quickAddBtn" class="button primary">+ Add customer</button>
-    </div>
+<section id="reviews" class="sp-card rounded-2xl p-5 lg:p-6 mb-5">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><span class="sp-label">Moderation</span><h2 class="text-xl font-bold mt-1">Incoming reviews</h2><p class="sp-muted text-sm mt-1">Approve or reject customer feedback before publication.</p></div><select id="reviewFilter" class="sp-input sm:w-44"><option value="all">All ratings</option><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select></div>
+<div id="reviewList" class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-5"><div class="empty-state">No reviews yet.</div></div>
+</section>
 
-    <section class="dash">
-      <div class="dash-card"><span>Total requests</span><strong id="requestCount">0</strong></div>
-      <div class="dash-card"><span>Total reviews</span><strong id="reviewCount">0</strong></div>
-      <div class="dash-card"><span>Average rating</span><strong id="averageRating">—</strong></div>
-      <div class="dash-card"><span>Plan</span><strong id="plan">Trial</strong></div>
-    </section>
-
-    <section class="panel" id="customerPanel">
-      <div class="panel-head">
-        <div><h2>Customers</h2><p>Add customers here, then send them a review request.</p></div>
-        <button id="addCustomerBtn" class="button secondary">Add customer</button>
-      </div>
-      <form id="customerForm" class="inline-form hidden">
-        <input id="customerName" type="text" required maxlength="120" placeholder="Customer name">
-        <input id="customerEmail" type="email" maxlength="254" placeholder="Customer email">
-        <input id="customerPhone" type="tel" maxlength="40" placeholder="Phone (optional)">
-        <button class="button primary" type="submit">Save customer</button>
-        <button id="cancelCustomer" class="button secondary" type="button">Cancel</button>
-      </form>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Action</th></tr></thead>
-          <tbody id="customerRows"><tr><td colspan="4">Loading customers…</td></tr></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head">
-        <div><h2>Review requests</h2><p>Quick-send is designed around the same workflow used by established review platforms: select a customer and create a request.</p></div>
-        <button id="requestBtn" class="button primary">Send request</button>
-      </div>
-      <form id="requestForm" class="inline-form hidden">
-        <select id="requestCustomer" required><option value="">Choose a customer</option></select>
-        <button class="button primary" type="submit">Create review request</button>
-        <button id="cancelRequest" class="button secondary" type="button">Cancel</button>
-      </form>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Customer</th><th>Status</th><th>Created</th><th>Action</th></tr></thead>
-          <tbody id="requestRows"><tr><td colspan="4">Loading requests…</td></tr></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head">
-        <div><h2>Incoming reviews</h2><p>Keep the review feed visible so you can act on feedback quickly.</p></div>
-        <select id="reviewFilter" class="compact-select"><option value="all">All ratings</option><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select>
-      </div>
-      <div id="reviewList" class="review-list"><div class="empty-state">No reviews yet.</div></div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head"><div><h2>Widget & API</h2><p>Once the public review flow is live, this area will provide your embeddable widget and API credentials.</p></div></div>
-      <div class="widget-preview">
-        <strong>Review widget</strong>
-        <span>Copy this embed code into your website to display approved StarPlusAI reviews.</span>
-        <textarea id="widgetCode" class="widget-code" readonly></textarea>
-        <button id="copyWidgetBtn" class="button secondary" type="button">Copy widget code</button>
-      </div>
-    </section>
-  </section>
-</main>
+<section id="widget" class="sp-card rounded-2xl p-5 lg:p-6">
+<span class="sp-label">Website integration</span><h2 class="text-xl font-bold mt-1">Widget & API</h2><p class="sp-muted text-sm mt-1">Embed approved StarPlusAI reviews on your website.</p>
+<div class="mt-5 rounded-2xl bg-slate-950 border border-slate-800 p-4"><div class="flex items-center justify-between gap-3"><div><div class="font-bold">Review widget</div><div class="text-xs sp-muted mt-1">One line of code</div></div><span class="text-xs text-emerald-400">Ready</span></div><textarea id="widgetCode" class="sp-input mt-4 font-mono text-xs min-h-28" readonly></textarea><button id="copyWidgetBtn" class="sp-btn sp-secondary px-4 py-2 text-sm mt-3" type="button">Copy widget code</button></div>
+</section>
+</div></div></div>
 <script>
+
 const SUPABASE_URL = 'https://rxebfyhoojuyasddkqyr.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_LUBsZv3T2XUey0jZ5BI4vw_6shsxEfg';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -422,6 +385,7 @@ db.auth.onAuthStateChange(async (event,session)=>{
   const {data}=await db.auth.getSession();
   if(data.session) await loadDashboard(data.session.user);
 })();
+
 </script>
-  <script src="starplusai-agent.js" defer></script>\n</body>
-</html>
+<script src="starplusai-agent.js" defer></script>
+</body></html>
