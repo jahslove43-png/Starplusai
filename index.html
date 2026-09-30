@@ -1,146 +1,321 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="StarPlusAI helps businesses collect customer reviews, manage incoming feedback, moderate reviews, and showcase approved social proof.">
-  <link rel="canonical" href="https://jahslove43-png.github.io/Starplusai/">
+  <meta name="description" content="StarPlusAI helps businesses collect customer reviews, manage feedback, moderate submissions, and showcase approved social proof.">
+  <link rel="canonical" href="https://starplusai.netlify.app/">
   <meta property="og:title" content="StarPlusAI — Turn customer feedback into visible trust">
-  <meta property="og:description" content="Collect, manage, approve, and showcase customer reviews with StarPlusAI.">
+  <meta property="og:description" content="Collect, manage, approve and showcase customer reviews with StarPlusAI.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://jahslove43-png.github.io/Starplusai/">
+  <meta property="og:url" content="https://starplusai.netlify.app/">
   <meta name="twitter:card" content="summary">
-  <title>StarPlusAI — Customer Review Management</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="starplusai-agent.css">\n</head>
-<body>
-<header class="site-header">
-  <a class="logo" href="index.html">StarPlusAI</a>
-  <nav aria-label="Main navigation">
-    <a href="features.html">Features</a>
-    <a href="how-it-works.html">How it works</a>
-    <a href="pricing.html">Pricing</a>
-    <a href="faq.html">FAQ</a>
-    <a href="auth.html?mode=login">Log in</a>
-    <a class="nav-button" href="auth.html?mode=signup">Start free trial</a>
-  </nav>
+  <title>StarPlusAI — Turn Customer Feedback Into Visible Trust</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        fontFamily: { sans: ['Inter','sans-serif'] },
+        colors: { brand: { 50:'#eef2ff',100:'#e0e7ff',500:'#6366f1',600:'#4f46e5',700:'#4338ca' } }
+      }}
+    }
+  </script>
+  <link rel="stylesheet" href="starplusai-agent.css">
+</head>
+
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-brand-500 selection:text-white">
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      <a href="index.html" class="flex items-center gap-3 shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-brand-500/30">
+          <i data-lucide="sparkles" class="w-6 h-6 text-white"></i>
+        </div>
+        <span class="text-xl font-extrabold tracking-tight text-white">StarPlus<span class="text-brand-500">AI</span></span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-300" aria-label="Main navigation">
+        <a href="#problem" class="hover:text-white transition-colors">Why StarPlusAI</a>
+        <a href="#how-it-works" class="hover:text-white transition-colors">How It Works</a>
+        <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+        <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+      </nav>
+
+      <div class="flex items-center gap-2 sm:gap-4">
+        <a href="auth.html?mode=login" class="hidden sm:inline-flex px-4 py-2.5 text-sm font-semibold text-slate-200 hover:text-white">Log In</a>
+        <a href="auth.html?mode=signup" class="inline-flex items-center justify-center px-4 sm:px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-xl transition-all shadow-lg shadow-brand-600/25">
+          Start Free Trial
+        </a>
+      </div>
+    </div>
+    <div class="lg:hidden flex items-center gap-2 overflow-x-auto pb-3 -mt-1 text-xs font-semibold text-slate-400" aria-label="Mobile navigation">
+      <a href="features.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg bg-slate-900">Features</a>
+      <a href="how-it-works.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg bg-slate-900">How it works</a>
+      <a href="pricing.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg bg-slate-900">Pricing</a>
+      <a href="faq.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg bg-slate-900">FAQ</a>
+    </div>
+  </div>
 </header>
 
 <main>
-  <section class="hero">
-    <div class="hero-copy">
-      <span class="eyebrow">Trusted review operations · 3-day free trial</span>
-      <h1>Turn happy customers into <span style="color:#4d8ff0">visible trust.</span></h1>
-      <p>StarPlusAI helps businesses collect customer reviews, manage incoming feedback, approve what they want to showcase, and publish social proof through a website widget.</p>
-      <div class="hero-actions">
-        <a class="button primary" href="auth.html?mode=signup">Start free trial</a>
-        <a class="button secondary" href="how-it-works.html">See how it works</a>
+  <section class="relative pt-40 pb-20 md:pt-52 md:pb-32 overflow-hidden">
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-brand-400 mb-8">
+        <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+        <span>Customer review management made simple</span>
       </div>
-      <p class="fine-print">No credit card is required to start. Paid checkout is not active yet.</p>
-    </div>
-    <div class="hero-card" aria-label="StarPlusAI dashboard preview">
-      <div class="card-top"><span>Review overview</span><strong>Pending moderation</strong></div>
-      <div class="metric"><strong>Manage</strong><span>Requests, customers and reviews in one workspace.</span></div>
-      <div class="review-line"><span>★★★★★</span><strong>Approved</strong></div>
-      <div class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.08] max-w-5xl mx-auto">
+        Turn customer feedback into
+        <span class="bg-gradient-to-r from-brand-500 via-indigo-400 to-purple-400 bg-clip-text text-transparent"> visible trust.</span>
+      </h1>
+
+      <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        Collect customer reviews, manage incoming feedback, approve what you want to showcase, and place your social proof on your website with StarPlusAI.
+      </p>
+
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="auth.html?mode=signup" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-brand-600 hover:bg-brand-500 rounded-xl transition-all shadow-xl shadow-brand-600/30 hover:-translate-y-0.5">
+          Start 3-Day Free Trial <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+        </a>
+        <a href="#how-it-works" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-slate-300 hover:text-white bg-slate-900 border border-slate-800 rounded-xl transition-all">
+          <i data-lucide="play" class="w-4 h-4 mr-2"></i> See How It Works
+        </a>
+      </div>
+
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs text-slate-400 font-medium">
+        <span class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> 3-day free trial</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> No credit card required</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> Built for growing businesses</span>
+      </div>
+
+      <div class="mt-16 relative rounded-2xl border border-slate-800/80 bg-slate-900/70 p-3 sm:p-4 shadow-2xl backdrop-blur-xl">
+        <div class="rounded-xl border border-slate-800 bg-slate-950 p-5 sm:p-7 overflow-hidden text-left">
+          <div class="flex items-center justify-between pb-5 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+            </div>
+            <span class="text-[10px] sm:text-xs text-slate-500 font-mono">StarPlusAI / Dashboard</span>
+          </div>
+          <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+              <span class="text-xs text-slate-400">Customers</span>
+              <div class="mt-2 text-2xl font-bold text-white">Manage</div>
+              <span class="text-xs text-slate-500">Customer records</span>
+            </div>
+            <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+              <span class="text-xs text-slate-400">Requests</span>
+              <div class="mt-2 text-2xl font-bold text-white">Track</div>
+              <span class="text-xs text-slate-500">Review invitations</span>
+            </div>
+            <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+              <span class="text-xs text-slate-400">Reviews</span>
+              <div class="mt-2 text-2xl font-bold text-white">Moderate</div>
+              <span class="text-xs text-slate-500">Pending / approved / rejected</span>
+            </div>
+            <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+              <span class="text-xs text-slate-400">Widget</span>
+              <div class="mt-2 text-2xl font-bold text-white">Showcase</div>
+              <span class="text-xs text-slate-500">Approved social proof</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="section trust-strip">
-    <span class="eyebrow">Built around a clear review workflow</span>
-    <div class="trust-grid">
-      <span>Customer requests</span><span>Moderation</span><span>Approved social proof</span><span>Website widget</span>
+  <section class="border-y border-slate-800/80 bg-slate-900/40 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-xs font-bold tracking-widest text-slate-500 uppercase">A simple review operations workflow</p>
+      <div class="mt-7 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-sm font-semibold">Customers</div>
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-sm font-semibold">Review Requests</div>
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-sm font-semibold">Moderation</div>
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-sm font-semibold">Website Widget</div>
+      </div>
     </div>
   </section>
 
-  <section class="section">
-    <span class="eyebrow">The problem</span>
-    <h2>Customer feedback should not disappear into inboxes and spreadsheets.</h2>
-    <div class="steps">
-      <article><span>01</span><h3>Requests get scattered</h3><p>Customer details and review invitations are easier to manage when they live in one workspace.</p></article>
-      <article><span>02</span><h3>Feedback needs attention</h3><p>Incoming reviews need a clear pending, approved, or rejected workflow before publication.</p></article>
-      <article><span>03</span><h3>Good reviews deserve visibility</h3><p>Approved reviews can become reusable social proof through an embeddable website widget.</p></article>
+  <section id="problem" class="py-24 md:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="text-xs font-bold tracking-widest text-brand-400 uppercase">Why StarPlusAI</span>
+        <h2 class="mt-3 text-3xl sm:text-5xl font-extrabold text-white tracking-tight">Stop letting valuable customer feedback disappear.</h2>
+        <p class="mt-5 text-slate-400 text-lg leading-relaxed">Keep review collection, moderation, and website social proof in one focused workflow.</p>
+      </div>
+
+      <div class="mt-14 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="p-8 rounded-2xl bg-rose-950/20 border border-rose-900/30">
+          <div class="inline-flex items-center gap-2 text-rose-400 font-bold text-lg mb-6"><i data-lucide="x-circle" class="w-6 h-6"></i> Without a review workflow</div>
+          <ul class="space-y-4 text-slate-300 text-sm sm:text-base">
+            <li class="flex items-start gap-3"><i data-lucide="minus" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i> Customer feedback can become scattered across different places.</li>
+            <li class="flex items-start gap-3"><i data-lucide="minus" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i> There is no clear moderation path before publication.</li>
+            <li class="flex items-start gap-3"><i data-lucide="minus" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i> Approved social proof can be difficult to reuse on your website.</li>
+          </ul>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-emerald-950/20 border border-emerald-900/30">
+          <div class="inline-flex items-center gap-2 text-emerald-400 font-bold text-lg mb-6"><i data-lucide="check-circle" class="w-6 h-6"></i> With StarPlusAI</div>
+          <ul class="space-y-4 text-slate-300 text-sm sm:text-base">
+            <li class="flex items-start gap-3"><i data-lucide="check" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i> Organize customers and review requests in one dashboard.</li>
+            <li class="flex items-start gap-3"><i data-lucide="check" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i> Review submissions move through pending, approved, and rejected states.</li>
+            <li class="flex items-start gap-3"><i data-lucide="check" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i> Showcase approved reviews using the public widget.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="section dark-section">
-    <div>
-      <span class="eyebrow">The StarPlusAI workflow</span>
-      <h2>One simple path from customer to published review.</h2>
-    </div>
-    <div class="steps">
-      <article><span>01</span><h3>Add customers</h3><p>Keep customer names, email addresses and optional phone numbers organized.</p></article>
-      <article><span>02</span><h3>Create requests</h3><p>Generate a unique review link and send the invitation through the configured email system.</p></article>
-      <article><span>03</span><h3>Moderate &amp; showcase</h3><p>Review submissions remain pending until the business approves them for public display.</p></article>
+  <section id="how-it-works" class="py-24 bg-slate-900/30 border-y border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="text-xs font-bold tracking-widest text-brand-400 uppercase">How It Works</span>
+        <h2 class="mt-3 text-3xl sm:text-5xl font-extrabold text-white tracking-tight">From customer invitation to published social proof.</h2>
+      </div>
+
+      <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-12 h-12 rounded-xl bg-brand-600/10 border border-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-xl mb-6">1</div>
+          <h3 class="text-xl font-bold text-white mb-3">Add customers</h3>
+          <p class="text-slate-400 leading-relaxed text-sm">Keep your customer information organized and ready for review requests.</p>
+        </div>
+        <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-12 h-12 rounded-xl bg-brand-600/10 border border-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-xl mb-6">2</div>
+          <h3 class="text-xl font-bold text-white mb-3">Request a review</h3>
+          <p class="text-slate-400 leading-relaxed text-sm">Create a secure review request and invite the customer to submit feedback.</p>
+        </div>
+        <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-12 h-12 rounded-xl bg-brand-600/10 border border-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-xl mb-6">3</div>
+          <h3 class="text-xl font-bold text-white mb-3">Approve & showcase</h3>
+          <p class="text-slate-400 leading-relaxed text-sm">Moderate incoming reviews and make approved reviews available through your website widget.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="section">
-    <span class="eyebrow">Product</span>
-    <h2>Tools for the work that actually happens.</h2>
-    <div class="feature-grid">
-      <article class="feature-card"><h3>Customer management</h3><p>Keep the people behind your review requests organized.</p><a href="features.html">Explore features →</a></article>
-      <article class="feature-card"><h3>Review requests</h3><p>Create unique review links with expiration and completion protection.</p><a href="features.html">Explore features →</a></article>
-      <article class="feature-card"><h3>Moderation</h3><p>Move reviews between pending, approved and rejected states.</p><a href="features.html">Explore features →</a></article>
-      <article class="feature-card"><h3>Public widget</h3><p>Expose only approved review content through the public widget feed.</p><a href="features.html">Explore features →</a></article>
+  <section id="features" class="py-24 md:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="text-xs font-bold tracking-widest text-brand-400 uppercase">Built For Review Operations</span>
+        <h2 class="mt-3 text-3xl sm:text-5xl font-extrabold text-white tracking-tight">Everything you need to manage customer reviews.</h2>
+      </div>
+
+      <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-7 rounded-2xl bg-slate-900 border border-slate-800"><i data-lucide="users" class="w-8 h-8 text-brand-400 mb-5"></i><h3 class="text-lg font-bold text-white mb-2">Customer Management</h3><p class="text-slate-400 text-sm leading-relaxed">Keep customer records organized for review collection.</p></div>
+        <div class="p-7 rounded-2xl bg-slate-900 border border-slate-800"><i data-lucide="send" class="w-8 h-8 text-brand-400 mb-5"></i><h3 class="text-lg font-bold text-white mb-2">Review Requests</h3><p class="text-slate-400 text-sm leading-relaxed">Create unique review links and manage invitation status.</p></div>
+        <div class="p-7 rounded-2xl bg-slate-900 border border-slate-800"><i data-lucide="shield-check" class="w-8 h-8 text-brand-400 mb-5"></i><h3 class="text-lg font-bold text-white mb-2">Moderation</h3><p class="text-slate-400 text-sm leading-relaxed">Keep incoming reviews pending until you decide whether to approve or reject them.</p></div>
+        <div class="p-7 rounded-2xl bg-slate-900 border border-slate-800"><i data-lucide="star" class="w-8 h-8 text-brand-400 mb-5"></i><h3 class="text-lg font-bold text-white mb-2">Social Proof</h3><p class="text-slate-400 text-sm leading-relaxed">Use approved customer feedback as visible proof on your website.</p></div>
+        <div class="p-7 rounded-2xl bg-slate-900 border border-slate-800"><i data-lucide="code-2" class="w-8 h-8 text-brand-400 mb-5"></i><h3 class="text-lg font-bold text-white mb-2">Embeddable Widget</h3><p class="text-slate-400 text-sm leading-relaxed">Connect your approved reviews to your website using the StarPlusAI widget.</p></div>
+        <div class="p-7 rounded-2xl bg-slate-900 border border-slate-800"><i data-lucide="layout-dashboard" class="w-8 h-8 text-brand-400 mb-5"></i><h3 class="text-lg font-bold text-white mb-2">Business Dashboard</h3><p class="text-slate-400 text-sm leading-relaxed">Manage your review workflow from one authenticated workspace.</p></div>
+      </div>
     </div>
   </section>
 
-  <section class="section product-preview">
-    <div>
-      <span class="eyebrow">Dashboard</span>
-      <h2>A focused workspace for review operations.</h2>
-      <p>Track request and review activity, manage customers, moderate incoming reviews, and access widget code from the same authenticated dashboard.</p>
-      <a class="button secondary" href="auth.html?mode=login">Open dashboard</a>
-    </div>
-    <div class="dashboard-mock" aria-label="Dashboard preview">
-      <div><span>Customers</span><strong>Organized</strong></div>
-      <div><span>Requests</span><strong>Tracked</strong></div>
-      <div><span>Reviews</span><strong>Moderated</strong></div>
-      <div><span>Widget</span><strong>Embeddable</strong></div>
+  <section class="py-24 bg-slate-900/30 border-y border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-14 items-center">
+      <div>
+        <span class="text-xs font-bold tracking-widest text-brand-400 uppercase">Dashboard</span>
+        <h2 class="mt-3 text-3xl sm:text-5xl font-extrabold text-white tracking-tight">A focused workspace for your review operations.</h2>
+        <p class="mt-5 text-slate-400 text-lg leading-relaxed">Manage customers, review requests, incoming reviews, moderation, and widget access from one place.</p>
+        <a href="auth.html?mode=login" class="mt-8 inline-flex items-center px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 font-semibold">Open Dashboard <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i></a>
+      </div>
+      <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 shadow-2xl">
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-4"><span class="font-semibold">Review Overview</span><span class="text-xs text-amber-400">Pending moderation</span></div>
+          <div class="grid grid-cols-2 gap-3 mt-4">
+            <div class="rounded-xl bg-slate-950 border border-slate-800 p-4"><span class="text-xs text-slate-500">Customers</span><p class="mt-2 font-bold">Organized</p></div>
+            <div class="rounded-xl bg-slate-950 border border-slate-800 p-4"><span class="text-xs text-slate-500">Requests</span><p class="mt-2 font-bold">Tracked</p></div>
+            <div class="rounded-xl bg-slate-950 border border-slate-800 p-4"><span class="text-xs text-slate-500">Reviews</span><p class="mt-2 font-bold">Moderated</p></div>
+            <div class="rounded-xl bg-slate-950 border border-slate-800 p-4"><span class="text-xs text-slate-500">Widget</span><p class="mt-2 font-bold">Ready to embed</p></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="section pricing">
-    <span class="eyebrow">Pricing</span>
-    <h2>Simple plans, with paid checkout coming later.</h2>
-    <div class="pricing-grid">
-      <article class="price-card"><h3>Starter</h3><p class="price">$29<span>/month</span></p><p>Up to 50 review requests/month.</p><ul><li>Review management</li><li>Customer management</li><li>Standard widget</li></ul><a class="button secondary" href="auth.html?mode=signup">Start trial</a></article>
-      <article class="price-card featured"><span class="popular">Growth</span><h3>Growth</h3><p class="price">$79<span>/month</span></p><p>Up to 250 review requests/month.</p><ul><li>Everything in Starter</li><li>Custom branding</li><li>Priority support</li></ul><a class="button primary" href="auth.html?mode=signup">Start trial</a></article>
-      <article class="price-card"><h3>Pro</h3><p class="price">$199<span>/month</span></p><p>Unlimited review requests.</p><ul><li>Everything in Growth</li><li>API access</li><li>Manager support</li></ul><a class="button secondary" href="auth.html?mode=signup">Start trial</a></article>
+  <section id="pricing" class="py-24 border-t border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="text-xs font-bold tracking-widest text-brand-400 uppercase">Transparent Pricing</span>
+        <h2 class="mt-3 text-3xl sm:text-5xl font-extrabold text-white tracking-tight">Choose the plan that fits your review volume.</h2>
+        <p class="mt-4 text-slate-400">All plans currently start with a 3-day free trial. Paid checkout is not activated yet.</p>
+      </div>
+
+      <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col">
+          <h3 class="text-xl font-bold">Starter</h3><p class="text-xs text-slate-500 mt-1">For smaller review programs</p>
+          <div class="mt-6"><span class="text-4xl font-extrabold">$29</span><span class="text-slate-400 text-sm"> / month</span></div>
+          <p class="mt-3 text-sm text-slate-400">Up to 50 review requests/month.</p>
+          <ul class="mt-8 space-y-4 text-sm text-slate-300 flex-1">
+            <li>✓ Review management</li><li>✓ Customer management</li><li>✓ Standard widget</li>
+          </ul>
+          <a href="auth.html?mode=signup" class="mt-8 w-full py-3 rounded-xl border border-slate-700 font-semibold text-center hover:bg-slate-800">Start Trial</a>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-slate-900 border-2 border-brand-500 relative flex flex-col shadow-xl shadow-brand-500/10">
+          <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-brand-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Growth</span>
+          <h3 class="text-xl font-bold">Growth</h3><p class="text-xs text-slate-500 mt-1">For scaling businesses</p>
+          <div class="mt-6"><span class="text-4xl font-extrabold">$79</span><span class="text-slate-400 text-sm"> / month</span></div>
+          <p class="mt-3 text-sm text-slate-400">Up to 250 review requests/month.</p>
+          <ul class="mt-8 space-y-4 text-sm text-slate-300 flex-1"><li>✓ Everything in Starter</li><li>✓ Custom branding</li><li>✓ Priority support</li></ul>
+          <a href="auth.html?mode=signup" class="mt-8 w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 font-semibold text-center shadow-lg shadow-brand-600/25">Start Trial</a>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col">
+          <h3 class="text-xl font-bold">Pro</h3><p class="text-xs text-slate-500 mt-1">For high-volume programs</p>
+          <div class="mt-6"><span class="text-4xl font-extrabold">$199</span><span class="text-slate-400 text-sm"> / month</span></div>
+          <p class="mt-3 text-sm text-slate-400">Unlimited review requests.</p>
+          <ul class="mt-8 space-y-4 text-sm text-slate-300 flex-1"><li>✓ Everything in Growth</li><li>✓ API access</li><li>✓ Manager support</li></ul>
+          <a href="auth.html?mode=signup" class="mt-8 w-full py-3 rounded-xl border border-slate-700 font-semibold text-center hover:bg-slate-800">Start Trial</a>
+        </div>
+      </div>
     </div>
-    <p class="fine-print">Paid subscription checkout and billing are planned but are not active. No charge is made by these buttons.</p>
   </section>
 
-  <section class="section testimonial-section">
-    <span class="eyebrow">Customer stories</span>
-    <h2>Testimonials belong here once they are real.</h2>
-    <div class="placeholder-card"><p>Real customer testimonials will be published here after verified customer feedback is available.</p></div>
-  </section>
-
-  <section class="section faq-preview">
-    <span class="eyebrow">Questions</span>
-    <h2>Clear answers before you start.</h2>
-    <div class="faq-list">
-      <details><summary>How long is the trial?</summary><p>The current trial period is 3 days and is controlled by the database.</p></details>
-      <details><summary>Can customers submit more than one review?</summary><p>No. A completed review request cannot be submitted again.</p></details>
-      <details><summary>Which reviews appear publicly?</summary><p>Only reviews with an approved status are returned by the public widget feed.</p></details>
+  <section id="faq" class="py-24 bg-slate-900/30 border-y border-slate-800/80">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center"><span class="text-xs font-bold tracking-widest text-brand-400 uppercase">FAQ</span><h2 class="mt-3 text-3xl sm:text-5xl font-extrabold">Questions, answered clearly.</h2></div>
+      <div class="mt-12 space-y-3">
+        <details class="group rounded-xl border border-slate-800 bg-slate-900 p-5"><summary class="cursor-pointer font-semibold">How long is the free trial?</summary><p class="mt-3 text-sm text-slate-400 leading-relaxed">The current trial period is 3 days and is controlled by the application database.</p></details>
+        <details class="group rounded-xl border border-slate-800 bg-slate-900 p-5"><summary class="cursor-pointer font-semibold">Which reviews appear on the public widget?</summary><p class="mt-3 text-sm text-slate-400 leading-relaxed">Only reviews that have been approved are exposed through the public widget feed.</p></details>
+        <details class="group rounded-xl border border-slate-800 bg-slate-900 p-5"><summary class="cursor-pointer font-semibold">Do I need a credit card to start?</summary><p class="mt-3 text-sm text-slate-400 leading-relaxed">No credit card is required to create an account and begin the current trial.</p></details>
+        <details class="group rounded-xl border border-slate-800 bg-slate-900 p-5"><summary class="cursor-pointer font-semibold">Is paid checkout active?</summary><p class="mt-3 text-sm text-slate-400 leading-relaxed">Not yet. The displayed plans are the planned pricing, but these trial buttons do not charge a customer.</p></details>
+      </div>
+      <div class="text-center mt-8"><a href="faq.html" class="text-brand-400 font-semibold hover:text-brand-300">Read all FAQs →</a></div>
     </div>
-    <a class="button secondary" href="faq.html">Read all FAQs</a>
   </section>
 
-  <section class="section final-cta">
-    <span class="eyebrow">Start with the real workflow</span>
-    <h2>Collect your first customer review with StarPlusAI.</h2>
-    <p>Create an account and use the 3-day trial to explore the current review-management workflow.</p>
-    <a class="button primary" href="auth.html?mode=signup">Start free trial</a>
+  <section class="py-24">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+      <div class="rounded-3xl bg-gradient-to-br from-brand-700/30 via-slate-900 to-slate-900 border border-brand-500/20 p-10 sm:p-16 shadow-2xl">
+        <span class="text-xs font-bold tracking-widest text-brand-400 uppercase">Start today</span>
+        <h2 class="mt-3 text-3xl sm:text-5xl font-extrabold">Build a review workflow your business can actually manage.</h2>
+        <p class="mt-5 text-slate-400 text-lg">Start your 3-day trial and explore the current StarPlusAI dashboard.</p>
+        <a href="auth.html?mode=signup" class="mt-8 inline-flex items-center px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-500 font-bold shadow-xl shadow-brand-600/25">Start Free Trial <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i></a>
+      </div>
+    </div>
   </section>
 </main>
 
-<footer>
-  <div><strong>StarPlusAI</strong><span>Customer review management for growing businesses.</span></div>
-  <div class="footer-links"><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></div>
-  <span>© 2026 StarPlusAI</span>
+<footer class="border-t border-slate-800 py-12 bg-slate-950">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-7">
+    <div><a href="index.html" class="text-xl font-extrabold">StarPlus<span class="text-brand-500">AI</span></a><p class="mt-2 text-sm text-slate-500">Customer review management for growing businesses.</p></div>
+    <div class="flex flex-wrap gap-5 text-sm text-slate-400"><a href="features.html" class="hover:text-white">Features</a><a href="pricing.html" class="hover:text-white">Pricing</a><a href="contact.html" class="hover:text-white">Contact</a><a href="privacy.html" class="hover:text-white">Privacy</a><a href="terms.html" class="hover:text-white">Terms</a></div>
+    <p class="text-xs text-slate-600">© 2026 StarPlusAI</p>
+  </div>
 </footer>
-  <script src="starplusai-agent.js" defer></script>\n</body>
+
+<script>lucide.createIcons();</script>
+<script src="starplusai-agent.js" defer></script>
+</body>
 </html>
