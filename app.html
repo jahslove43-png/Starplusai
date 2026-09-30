@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <link rel="stylesheet" href="starplusai-agent.css">
 <style>
@@ -28,6 +29,17 @@
 .sp-nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;color:#94a3b8;font-size:13px;font-weight:600}.sp-nav-item:hover,.sp-nav-item.active{background:#111c31;color:#fff}.sp-nav-item.active{box-shadow:inset 2px 0 #6366f1}.dashboard-panel{display:none}.dashboard-panel.active{display:block}
 .sp-stat{position:relative;overflow:hidden}.sp-stat:after{content:"";position:absolute;right:-30px;top:-40px;width:110px;height:110px;border-radius:50%;background:rgba(99,102,241,.08)}
 @media(max-width:900px){.sp-sidebar{display:none}.sp-main{margin-left:0!important}.sp-mobile-nav{display:flex!important}.sp-table-wrap{overflow-x:auto}.sp-table{min-width:650px}}
+
+/* StarPlusAI growth/AI dashboard layer */
+.ai-gradient{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.08));border-color:rgba(99,102,241,.28)}
+.ai-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:rgba(99,102,241,.12);color:#a5b4fc;font-size:11px;font-weight:800}
+.check-item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #1e293b;border-radius:12px;background:#0b1220}
+.check-item.done{border-color:rgba(16,185,129,.25);background:rgba(16,185,129,.05)}
+.check-dot{width:22px;height:22px;border-radius:7px;border:1px solid #475569;display:grid;place-items:center;font-size:12px;flex:none}.check-item.done .check-dot{background:#059669;border-color:#059669;color:#fff}
+.status-badge{display:inline-flex;padding:4px 8px;border-radius:999px;background:#1e293b;color:#cbd5e1;font-size:10px;font-weight:800;text-transform:capitalize}.status-badge.completed,.status-badge.approved,.status-badge.opened{background:rgba(16,185,129,.12);color:#6ee7b7}.status-badge.pending,.status-badge.sent{background:rgba(99,102,241,.12);color:#a5b4fc}.status-badge.rejected{background:rgba(239,68,68,.12);color:#fca5a5}
+.review-card{border:1px solid #1e293b;border-radius:16px;padding:16px;background:#0b1220}.review-card-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.stars{color:#fbbf24;letter-spacing:1px}.ai-response{margin-top:12px;border:1px solid rgba(99,102,241,.25);background:rgba(79,70,229,.07);border-radius:12px;padding:12px}.ai-response textarea{min-height:96px}
+.widget-builder{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px}.widget-preview{min-height:360px;border-radius:18px;border:1px dashed #334155;padding:22px;display:grid;place-items:center;background:#f8fafc}.widget-preview.dark{background:#020617}.builder-tab{padding:9px 12px;border-radius:9px;color:#94a3b8;font-size:12px;font-weight:800}.builder-tab.active{background:#1e293b;color:#fff}@media(max-width:900px){.widget-builder{grid-template-columns:1fr}}
+.qr-box{background:#fff;border-radius:14px;padding:12px;display:inline-flex}.qr-box canvas{max-width:220px;height:auto}
 </style>
 </head>
 <body class="min-h-full antialiased">
@@ -51,18 +63,23 @@
 <aside class="sp-sidebar fixed inset-y-0 left-0 z-40 w-64 border-r border-slate-800 bg-slate-950/95 p-4">
 <div class="flex items-center gap-3 px-2 py-3 mb-7"><div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 grid place-items-center">✦</div><span class="font-extrabold text-lg">StarPlus<span class="text-indigo-400">AI</span></span></div>
 <nav class="space-y-1">
-<a href="#overview" data-panel="overview" class="sp-nav-item active">▦ <span>Overview</span></a><a href="#customers" data-panel="customers" class="sp-nav-item">♙ <span>Customers</span></a><a href="#requests" data-panel="requests" class="sp-nav-item">↗ <span>Review Requests</span></a><a href="#reviews" data-panel="reviews" class="sp-nav-item">★ <span>Incoming Reviews</span></a><a href="#widget" data-panel="widget" class="sp-nav-item">◈ <span>Widget & API</span></a>
+<a href="#overview" data-panel="overview" class="sp-nav-item active">▦ <span>Overview</span></a><a href="#customers" data-panel="customers" class="sp-nav-item">♙ <span>Customers</span></a><a href="#requests" data-panel="requests" class="sp-nav-item">↗ <span>Review Requests</span></a><a href="#reviews" data-panel="reviews" class="sp-nav-item">★ <span>Incoming Reviews</span></a><a href="#widget" data-panel="widget" class="sp-nav-item">◈ <span>Widget & API</span></a><a href="#notifications" data-panel="notifications" class="sp-nav-item">♢ <span>Notifications</span></a>
 </nav>
 <div class="absolute bottom-4 left-4 right-4 sp-card rounded-2xl p-4"><div class="sp-label">Workspace</div><div id="sidePlan" class="text-sm font-bold mt-1">Trial</div><div class="h-1.5 rounded-full bg-slate-800 mt-3 overflow-hidden"><div class="h-full bg-indigo-500 w-1/3"></div></div><a href="index.html" class="block text-xs text-slate-400 mt-3 hover:text-white">← Back to website</a></div>
 </aside>
 <div class="sp-main ml-64 min-h-screen">
 <header class="h-16 sticky top-0 z-30 border-b border-slate-800 bg-slate-950/85 backdrop-blur-xl px-5 lg:px-8 flex items-center justify-between">
 <div><span class="sp-label">Business workspace</span><div id="topBusinessName" class="font-semibold text-sm">StarPlusAI</div></div>
-<div class="flex items-center gap-2"><a href="index.html" class="hidden sm:inline-flex sp-btn sp-secondary px-3 py-2 text-xs">View site</a><button id="logoutBtn" class="sp-btn sp-secondary px-3 py-2 text-xs">Log out</button></div>
+<div class="flex items-center gap-2"><button id="topSendRequestBtn" class="sp-btn sp-primary px-3 py-2 text-xs">+ Send new request</button><a href="index.html" class="hidden sm:inline-flex sp-btn sp-secondary px-3 py-2 text-xs">View site</a><button id="logoutBtn" class="sp-btn sp-secondary px-3 py-2 text-xs">Log out</button></div>
 </header>
 <div class="p-5 lg:p-8 max-w-[1500px] mx-auto">
 <section id="overview" class="dashboard-panel active mb-8">
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-5"><div><span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Overview</span><h1 id="welcome" class="text-3xl lg:text-4xl font-extrabold tracking-tight mt-1">Welcome to StarPlusAI</h1><p class="sp-muted mt-2">Your command center for customer feedback and social proof.</p><div id="trialBanner" class="hidden mt-4 rounded-xl px-4 py-3 text-sm font-semibold" role="status"></div></div><button id="quickAddBtn" class="sp-btn sp-primary px-5 py-3">+ Add customer</button></div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-5"><div><span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Overview</span><h1 id="welcome" class="text-3xl lg:text-4xl font-extrabold tracking-tight mt-1">Welcome to StarPlusAI</h1><p class="sp-muted mt-2">Your command center for customer feedback, AI insights and social proof.</p><div id="trialBanner" class="hidden mt-4 rounded-xl px-4 py-3 text-sm font-semibold" role="status"></div></div><div class="flex gap-2"><button id="demoToggle" class="sp-btn sp-secondary px-4 py-3 text-sm">Preview demo data</button><button id="quickAddBtn" class="sp-btn sp-primary px-5 py-3">+ Add customer</button></div></div>
+<div class="sp-card rounded-2xl p-5 mt-5 ai-gradient">
+<div class="flex items-start justify-between gap-4"><div><span class="ai-chip">✦ AI POWERED</span><h2 class="text-lg font-bold mt-3">AI Insights</h2><p id="aiInsightsText" class="sp-muted text-sm mt-1">Analyze your incoming reviews to discover what customers praise, what needs attention, and what to improve next.</p></div><button id="generateInsightsBtn" class="sp-btn sp-primary px-4 py-2 text-sm">Generate insights</button></div>
+<div id="aiInsightCards" class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4"></div>
+</div>
+<div class="sp-card rounded-2xl p-5 mt-5"><div class="flex items-center justify-between gap-3"><div><span class="sp-label">Getting started</span><h2 class="text-xl font-bold mt-1">Turn reviews into social proof</h2></div><span id="setupProgress" class="text-xs text-indigo-300 font-bold">0/4 complete</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4" id="setupChecklist"></div></div>
 </section>
 <section class="grid grid-cols-2 xl:grid-cols-4 gap-3 lg:gap-5 mb-8">
 <div class="sp-card sp-stat rounded-2xl p-5"><div class="sp-label">Review requests</div><div id="requestCount" class="text-3xl font-extrabold mt-2">0</div><div class="text-xs sp-muted mt-1">Total created</div></div>
@@ -80,6 +97,11 @@
 <section id="requests" class="dashboard-panel sp-card rounded-2xl p-5 lg:p-6 mb-5">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><span class="sp-label">Collection</span><h2 class="text-xl font-bold mt-1">Review requests</h2><p class="sp-muted text-sm mt-1">Create secure review links and send requests.</p></div><button id="requestBtn" class="sp-btn sp-primary px-4 py-2 text-sm">Send request</button></div>
 <form id="requestForm" class="hidden flex flex-col sm:flex-row gap-2 mt-5"><select id="requestCustomer" class="sp-input" required><option value="">Choose a customer</option></select><button class="sp-btn sp-primary px-4 py-2" type="submit">Create request</button><button id="cancelRequest" class="sp-btn sp-secondary px-4" type="button">Cancel</button></form>
+<div class="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-3">
+<div class="rounded-2xl border border-slate-800 bg-slate-950 p-4"><div class="font-bold">QR review link</div><p class="text-xs sp-muted mt-1">Generate a printable QR code for tables, receipts or packaging.</p><div class="flex gap-2 mt-3"><select id="qrCustomer" class="sp-input"></select><button id="makeQrBtn" class="sp-btn sp-secondary px-3 text-xs">Generate</button></div><div id="qrResult" class="mt-4 text-center"></div></div>
+<div class="rounded-2xl border border-slate-800 bg-slate-950 p-4"><div class="font-bold">Messaging</div><p class="text-xs sp-muted mt-1">Share review invitations through WhatsApp as well as email.</p><div class="flex gap-2 mt-3"><select id="waCustomer" class="sp-input"></select><button id="waBtn" class="sp-btn sp-secondary px-3 text-xs">WhatsApp</button></div></div>
+<div class="rounded-2xl border border-slate-800 bg-slate-950 p-4"><div class="font-bold">Automatic follow-up</div><p class="text-xs sp-muted mt-1">Prepare a reminder 3 days after an unopened request.</p><label class="flex items-center gap-3 mt-3 text-sm"><input id="followupToggle" type="checkbox"> Enable reminder workflow</label><div class="text-[10px] text-slate-500 mt-2">Follow-up scheduling is saved for this browser until the server automation is connected.</div></div>
+</div>
 <div class="sp-table-wrap mt-5"><table class="sp-table"><thead><tr><th>Customer</th><th>Status</th><th>Created</th><th>Action</th></tr></thead><tbody id="requestRows"><tr><td colspan="4">Loading requests…</td></tr></tbody></table></div>
 </section>
 
@@ -88,9 +110,26 @@
 <div id="reviewList" class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-5"><div class="empty-state">No reviews yet.</div></div>
 </section>
 
-<section id="widget" class="dashboard-panel sp-card rounded-2xl p-5 lg:p-6">
-<span class="sp-label">Website integration</span><h2 class="text-xl font-bold mt-1">Widget & API</h2><p class="sp-muted text-sm mt-1">Embed approved StarPlusAI reviews on your website.</p>
-<div class="mt-5 rounded-2xl bg-slate-950 border border-slate-800 p-4"><div class="flex items-center justify-between gap-3"><div><div class="font-bold">Review widget</div><div class="text-xs sp-muted mt-1">One line of code</div></div><span class="text-xs text-emerald-400">Ready</span></div><textarea id="widgetCode" class="sp-input mt-4 font-mono text-xs min-h-28" readonly></textarea><button id="copyWidgetBtn" class="sp-btn sp-secondary px-4 py-2 text-sm mt-3" type="button">Copy widget code</button></div>
+<section id="notifications" class="dashboard-panel sp-card rounded-2xl p-5 lg:p-6 mb-5">
+<span class="sp-label">Alerts</span><h2 class="text-xl font-bold mt-1">Notification settings</h2><p class="sp-muted text-sm mt-1">Choose which review events should trigger alerts.</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5">
+<label class="check-item"><input id="notifyNewReview" type="checkbox"> <span><strong>New review</strong><small class="block sp-muted mt-1">Alert when any review arrives.</small></span></label>
+<label class="check-item"><input id="notifyNegative" type="checkbox"> <span><strong>Negative review</strong><small class="block sp-muted mt-1">Prioritize 1–3 star feedback.</small></span></label>
+<label class="check-item"><input id="notifyApproved" type="checkbox"> <span><strong>Approved review</strong><small class="block sp-muted mt-1">Confirm publication-ready feedback.</small></span></label>
+</div><button id="saveNotifications" class="sp-btn sp-primary px-4 py-2 mt-4 text-sm">Save notification preferences</button>
+</section><section id="widget" class="dashboard-panel sp-card rounded-2xl p-5 lg:p-6">
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3"><div><span class="sp-label">Website integration</span><h2 class="text-xl font-bold mt-1">Widget & API Builder</h2><p class="sp-muted text-sm mt-1">Customize your social proof before copying the embed code.</p></div><span class="ai-chip">SEO + AI SUMMARY</span></div>
+<div class="widget-builder mt-5">
+<div class="sp-card rounded-2xl p-4">
+<div class="flex gap-1 mb-4"><button class="builder-tab active" data-builder-tab="layout">Layout</button><button class="builder-tab" data-builder-tab="style">Style</button><button class="builder-tab" data-builder-tab="ai">AI</button></div>
+<div id="builderLayout" class="builder-pane space-y-4"><label class="block text-xs font-bold text-slate-400">LAYOUT<select id="widgetLayout" class="sp-input mt-2"><option value="grid">Masonry / Grid</option><option value="carousel">Carousel slider</option><option value="floating">Floating toast badge</option><option value="sidebar">Sidebar badge</option></select></label><label class="block text-xs font-bold text-slate-400">DEVICE<select id="widgetDevice" class="sp-input mt-2"><option value="desktop">Desktop</option><option value="mobile">Mobile</option></select></label></div>
+<div id="builderStyle" class="builder-pane hidden space-y-4"><label class="block text-xs font-bold text-slate-400">BRAND COLOR<input id="widgetColor" class="sp-input mt-2 h-11" type="color" value="#4f46e5"></label><label class="flex items-center justify-between text-sm"><span>Dark mode</span><input id="widgetDark" type="checkbox"></label><label class="block text-xs font-bold text-slate-400">Corner radius<select id="widgetRadius" class="sp-input mt-2"><option value="12">12px</option><option value="18">18px</option><option value="24">24px</option></select></label></div>
+<div id="builderAi" class="builder-pane hidden space-y-4"><label class="flex items-center justify-between text-sm"><span>Show AI summary</span><input id="widgetAiSummary" type="checkbox" checked></label><textarea id="widgetSummary" class="sp-input min-h-28" placeholder="AI-generated summary appears here..."></textarea><button id="generateWidgetSummary" class="sp-btn sp-primary w-full py-2 text-sm">✦ Generate AI summary</button></div>
+<div class="mt-5 pt-4 border-t border-slate-800"><button id="saveWidgetConfig" class="sp-btn sp-secondary w-full py-2 text-sm">Save widget settings</button></div>
+</div>
+<div><div class="flex items-center justify-between mb-3"><span class="text-sm font-bold">Live preview</span><div class="flex gap-2"><button id="widgetPreviewBg" class="text-xs text-slate-400">Toggle background</button></div></div><div id="widgetPreview" class="widget-preview"><div class="w-full max-w-xl rounded-2xl p-5 shadow-xl" id="previewCard"><div class="flex items-center justify-between gap-3"><div><div id="previewBusiness" class="font-bold text-lg">Customer reviews</div><div class="text-amber-400 text-lg mt-1">★★★★★ <span class="text-slate-400 text-sm">4.9</span></div></div><span class="text-xs text-slate-400">120 reviews</span></div><p id="previewSummary" class="text-sm text-slate-500 mt-4">Highly rated for quality, service and fast delivery.</p><div class="grid grid-cols-2 gap-2 mt-4"><div class="rounded-xl bg-slate-100 p-3 text-sm">“Excellent service.”</div><div class="rounded-xl bg-slate-100 p-3 text-sm">“Fast and reliable.”</div></div></div></div>
+<div class="sp-card rounded-2xl p-4 mt-3"><div class="flex items-center justify-between"><div><div class="font-bold">Embed code</div><div class="text-xs sp-muted mt-1">Includes your selected layout and AI summary settings.</div></div><span class="text-xs text-emerald-400">Ready</span></div><textarea id="widgetCode" class="sp-input mt-4 font-mono text-xs min-h-28" readonly></textarea><div class="flex gap-2 mt-3"><button id="copyWidgetBtn" class="sp-btn sp-primary px-4 py-2 text-sm" type="button">Copy widget code</button><button id="downloadSocialProof" class="sp-btn sp-secondary px-4 py-2 text-sm" type="button">Export social graphic</button></div></div></div>
+</div>
 </section>
 </div></div></div>
 <script>
@@ -188,9 +227,7 @@ async function loadDashboard(user, isLogin=false) {
     .select('name,plan,subscription_status,trial_ends_at').eq('id', user.id).maybeSingle();
   if (businessError || !business) return toast('We could not load your business profile.', 'error');
   $('welcome').textContent = 'Welcome, ' + business.name;
-  const widgetCode = '<div id="starplusai-reviews"></div>\\n' +
-    '<' + 'script src="' + window.location.origin + '/widget.js" data-business-id="' + currentUser.id + '" data-target="starplusai-reviews"></' + 'script>';
-  $('widgetCode').value = widgetCode;
+  const widgetCode = buildWidgetCode(); $('widgetCode').value = widgetCode;
   $('plan').textContent = business.plan === 'trial' ? 'Trial' : business.plan[0].toUpperCase()+business.plan.slice(1);
   if (business.plan === 'trial' && business.trial_ends_at) {
     const ends = new Date(business.trial_ends_at);
@@ -225,7 +262,7 @@ async function loadDashboard(user, isLogin=false) {
   renderCustomers(customers.data || []);
   renderRequests(requests.data || []);
   renderReviews();
-  populateRequestCustomers(customers.data || []);
+  populateRequestCustomers(customers.data || []); populateCustomerSelectors(customers.data || []); renderSetupChecklist(customers.data||[],requests.data||[],reviews.data||[]); updateWidgetPreview(business.name); loadPreferences();
 }
 
 function renderCustomers(rows) {
@@ -292,13 +329,82 @@ function renderReviews() {
       ${r.status !== 'rejected' ? '<button class="text-button moderate-review" data-id="' + esc(r.id) + '" data-status="rejected">Reject</button>' : ''}
     </div>
   </article>`).join('') : '<div class="empty-state">No reviews match this filter.</div>';
-  document.querySelectorAll('.moderate-review').forEach(btn => btn.addEventListener('click', () => moderateReview(btn.dataset.id, btn.dataset.status)));
+  document.querySelectorAll('.moderate-review').forEach(btn => btn.addEventListener('click', () => moderateReview(btn.dataset.id, btn.dataset.status))); document.querySelectorAll('.draft-ai-response').forEach(btn=>btn.addEventListener('click',()=>draftAIResponse(btn.dataset.id)));
 }
 
 function populateRequestCustomers(rows) {
   $('requestCustomer').innerHTML = '<option value="">Choose a customer</option>' + rows.map(c => `<option value="${c.id}">${esc(c.name)}${c.email ? ' — '+esc(c.email) : ''}</option>`).join('');
 }
 
+function aiCall(prompt){
+  return fetch(SUPABASE_URL+'/functions/v1/starplusai-agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:prompt}]})})
+    .then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||'AI service unavailable');return d.reply||'';});
+}
+function buildWidgetCode(){
+  const layout=$('widgetLayout')?.value||localStorage.getItem('sp_widget_layout')||'grid';
+  const color=$('widgetColor')?.value||localStorage.getItem('sp_widget_color')||'#4f46e5';
+  const dark=$('widgetDark')?.checked||localStorage.getItem('sp_widget_dark')==='true';
+  const radius=$('widgetRadius')?.value||localStorage.getItem('sp_widget_radius')||'18';
+  const ai=$('widgetAiSummary')?.checked!==false && localStorage.getItem('sp_widget_ai')!=='false';
+  return '<div id="starplusai-reviews"></div>\\n<script src="'+window.location.origin+'/widget.js" data-business-id="'+currentUser.id+'" data-target="starplusai-reviews" data-layout="'+layout+'" data-color="'+color+'" data-dark="'+dark+'" data-radius="'+radius+'" data-ai-summary="'+ai+'"></script>';
+}
+function populateCustomerSelectors(rows){
+  const opts='<option value="">Choose a customer</option>'+rows.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.name)+(c.phone?' — '+esc(c.phone):'')+'</option>').join('');
+  if($('qrCustomer')) $('qrCustomer').innerHTML=opts;
+  if($('waCustomer')) $('waCustomer').innerHTML=opts;
+}
+function renderSetupChecklist(customers,requests,reviews){
+  const items=[
+    [customers.length>0,'Import your first customer contact','customers'],
+    [localStorage.getItem('sp_request_template')==='1','Customize your review request message','requests'],
+    [requests.length>0,'Send your first review request','requests'],
+    [localStorage.getItem('sp_widget_saved')==='1','Copy your website embed code','widget']
+  ];
+  const done=items.filter(x=>x[0]).length;
+  $('setupProgress').textContent=done+'/4 complete';
+  $('setupChecklist').innerHTML=items.map(x=>'<button class="check-item '+(x[0]?'done':'')+' text-left" data-go="'+x[2]+'"><span class="check-dot">'+(x[0]?'✓':'')+'</span><span><strong class="text-sm">'+x[1]+'</strong><small class="block sp-muted mt-1">'+(x[0]?'Completed':'Open this step')+'</small></span></button>').join('');
+  document.querySelectorAll('#setupChecklist [data-go]').forEach(b=>b.onclick=()=>{activatePanel(b.dataset.go);if(b.dataset.go==='requests')show('requestForm');});
+}
+function loadPreferences(){
+  const prefs=JSON.parse(localStorage.getItem('sp_notifications')||'{}');
+  ['NewReview','Negative','Approved'].forEach(k=>{const el=$('notify'+k);if(el)el.checked=prefs[k]??true;});
+  if($('followupToggle'))$('followupToggle').checked=localStorage.getItem('sp_followup')==='true';
+  $('widgetLayout').value=localStorage.getItem('sp_widget_layout')||'grid';$('widgetColor').value=localStorage.getItem('sp_widget_color')||'#4f46e5';$('widgetDark').checked=localStorage.getItem('sp_widget_dark')==='true';$('widgetRadius').value=localStorage.getItem('sp_widget_radius')||'18';$('widgetAiSummary').checked=localStorage.getItem('sp_widget_ai')!=='false';$('widgetSummary').value=localStorage.getItem('sp_widget_summary')||'';
+}
+function updateWidgetPreview(name){
+  $('previewBusiness').textContent=name||'Customer reviews';
+  const dark=$('widgetDark').checked, color=$('widgetColor').value, radius=$('widgetRadius').value;
+  $('widgetPreview').classList.toggle('dark',dark);$('previewCard').style.borderRadius=radius+'px';$('previewCard').style.border='2px solid '+color;
+  $('previewSummary').textContent=$('widgetSummary').value||'Highly rated for quality, service and fast delivery.';
+  $('previewSummary').style.color=dark?'#cbd5e1':'#64748b';
+  document.querySelectorAll('.builder-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.builder-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');['Layout','Style','Ai'].forEach(x=>$('builder'+x).classList.add('hidden'));$('builder'+b.dataset.builderTab.charAt(0).toUpperCase()+b.dataset.builderTab.slice(1)).classList.remove('hidden');});
+}
+function saveWidget(){
+  localStorage.setItem('sp_widget_layout',$('widgetLayout').value);localStorage.setItem('sp_widget_color',$('widgetColor').value);localStorage.setItem('sp_widget_dark',$('widgetDark').checked);localStorage.setItem('sp_widget_radius',$('widgetRadius').value);localStorage.setItem('sp_widget_ai',$('widgetAiSummary').checked);localStorage.setItem('sp_widget_summary',$('widgetSummary').value);localStorage.setItem('sp_widget_saved','1');
+  $('widgetCode').value=buildWidgetCode();updateWidgetPreview($('previewBusiness').textContent);toast('Widget settings saved.');
+}
+async function generateAIInsights(){
+  if(!currentReviews.length){$('aiInsightsText').textContent='Add some customer reviews first. AI insights will appear here automatically once feedback arrives.';return;}
+  $('generateInsightsBtn').disabled=true;$('generateInsightsBtn').textContent='Analyzing…';
+  try{const compact=currentReviews.map(r=>({rating:r.rating,comment:r.comment,status:r.status}));const reply=await aiCall('You are the StarPlusAI review insights engine. Analyze these customer reviews. Return exactly 3 concise insight cards as plain text, each starting with a short label and colon. Mention sentiment, recurring praise, recurring issues, and one practical action. Do not invent data. Reviews: '+JSON.stringify(compact));$('aiInsightsText').textContent=reply;$('aiInsightCards').innerHTML='<div class="md:col-span-3 rounded-xl bg-slate-950/60 border border-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap">'+esc(reply)+'</div>';}catch(e){toast(e.message,'error');}finally{$('generateInsightsBtn').disabled=false;$('generateInsightsBtn').textContent='Generate insights';}
+}
+async function draftAIResponse(id){
+  const r=currentReviews.find(x=>String(x.id)===String(id));if(!r)return;
+  const card=document.querySelector('.draft-ai-response[data-id="'+id+'"]')?.closest('.review-card');if(!card)return;
+  let box=card.querySelector('.ai-response');if(!box){box=document.createElement('div');box.className='ai-response';box.innerHTML='<div class="ai-chip">✦ AI DRAFT</div><textarea class="sp-input mt-2" readonly>Generating…</textarea><div class="flex gap-2 mt-2"><button class="sp-btn sp-secondary px-3 py-2 text-xs ai-copy">Copy</button><button class="sp-btn sp-primary px-3 py-2 text-xs ai-use">Use as response</button></div>';card.appendChild(box);}
+  const ta=box.querySelector('textarea');try{const reply=await aiCall('Draft a concise professional business reply to this customer review. For 4-5 stars, thank them specifically. For 1-3 stars, acknowledge the concern, apologize where appropriate, and offer a constructive next step. Never argue or invent facts. Review: '+JSON.stringify({rating:r.rating,comment:r.comment}));ta.value=reply;box.querySelector('.ai-copy').onclick=async()=>{await navigator.clipboard.writeText(ta.value);toast('AI response copied.');};box.querySelector('.ai-use').onclick=()=>{ta.readOnly=false;ta.focus();toast('Edit the draft, then paste it into your response channel.');};}catch(e){ta.value=e.message;toast(e.message,'error');}
+}
+function generateQr(){
+  const id=$('qrCustomer').value;if(!id)return toast('Choose a customer first.','error');
+  const opt=$('qrCustomer').selectedOptions[0], token='customer-'+id;
+  const url=new URL('review.html',window.location.href);url.searchParams.set('customer',id);
+  $('qrResult').innerHTML='<div class="qr-box"><canvas id="qrCanvas"></canvas></div><div class="text-xs text-slate-400 mt-2">'+esc(opt.text)+'</div><button id="downloadQr" class="sp-btn sp-secondary px-3 py-2 text-xs mt-2">Download QR</button>';
+  QRCode.toCanvas($('qrCanvas'),url.href,{width:220,margin:2},()=>{});$('downloadQr').onclick=()=>{const a=document.createElement('a');a.download='starplusai-review-qr.png';a.href=$('qrCanvas').toDataURL('image/png');a.click();};
+}
+function openWhatsApp(){
+  const id=$('waCustomer').value;if(!id)return toast('Choose a customer first.','error');const opt=$('waCustomer').selectedOptions[0];const url=new URL('review.html',window.location.href);url.searchParams.set('customer',id);const msg='Hi '+opt.text.split(' — ')[0]+', we would love your feedback. Please share your review here: '+url.href;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank','noopener');}
+function exportSocialGraphic(){
+  const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1080;const ctx=canvas.getContext('2d');ctx.fillStyle=$('widgetColor').value;ctx.fillRect(0,0,1080,1080);ctx.fillStyle='#fff';ctx.font='bold 56px Inter, sans-serif';ctx.fillText('★★★★★',80,170);ctx.font='700 44px Inter, sans-serif';const text=$('widgetSummary').value||'Customers trust businesses that listen.';const words=text.split(' ');let line='',y=310;for(const w of words){const test=line?line+' '+w:w;if(ctx.measureText(test).width>880){ctx.fillText(line,80,y);y+=62;line=w}else line=test}if(line)ctx.fillText(line,80,y);ctx.font='600 34px Inter, sans-serif';ctx.fillText('Powered by StarPlusAI',80,940);const a=document.createElement('a');a.download='starplusai-social-proof.png';a.href=canvas.toDataURL('image/png');a.click();toast('Social proof graphic exported.');}
 $('signupForm').addEventListener('submit', async e => {
   e.preventDefault();
   const businessName=$('businessName').value.trim(), email=$('signupEmail').value.trim(), password=$('signupPassword').value;
@@ -365,6 +471,7 @@ $('requestForm').addEventListener('submit',async e=>{
   const expiresAt=new Date(Date.now()+30*24*60*60*1000).toISOString();
   const {data:created,error}=await db.from('review_requests').insert({business_id:currentUser.id,customer_id:customerId,status:'pending',expires_at:expiresAt}).select('id').single();
   if(error) return toast(error.message,'error');
+  localStorage.setItem('sp_request_template','1');
   $('requestForm').reset(); hide('requestForm');
   await loadDashboard(currentUser);
   if(created?.id) await sendReviewEmail(created.id);
@@ -380,6 +487,16 @@ $('copyWidgetBtn').addEventListener('click', async () => {
   }
 });
 
+$('generateInsightsBtn').addEventListener('click',generateAIInsights);
+$('topSendRequestBtn').addEventListener('click',()=>{activatePanel('requests');show('requestForm');$('requestForm').scrollIntoView({behavior:'smooth',block:'center'});});
+$('makeQrBtn').addEventListener('click',generateQr);$('waBtn').addEventListener('click',openWhatsApp);
+$('followupToggle').addEventListener('change',e=>localStorage.setItem('sp_followup',e.target.checked));
+$('saveNotifications').addEventListener('click',()=>{const p={NewReview:$('notifyNewReview').checked,Negative:$('notifyNegative').checked,Approved:$('notifyApproved').checked};localStorage.setItem('sp_notifications',JSON.stringify(p));toast('Notification preferences saved.');});
+$('saveWidgetConfig').addEventListener('click',saveWidget);$('downloadSocialProof').addEventListener('click',exportSocialGraphic);
+['widgetLayout','widgetColor','widgetDark','widgetRadius','widgetAiSummary','widgetSummary'].forEach(id=>$(id).addEventListener('input',()=>updateWidgetPreview($('previewBusiness').textContent)));
+$('generateWidgetSummary').addEventListener('click',async()=>{try{$('generateWidgetSummary').disabled=true;$('generateWidgetSummary').textContent='Generating…';const reply=await aiCall('Create one short verified-style summary for a business review widget using only these reviews. Do not claim facts not present. Reviews: '+JSON.stringify(currentReviews.map(r=>({rating:r.rating,comment:r.comment,status:r.status}))));$('widgetSummary').value=reply;updateWidgetPreview($('previewBusiness').textContent);}catch(e){toast(e.message,'error');}finally{$('generateWidgetSummary').disabled=false;$('generateWidgetSummary').textContent='✦ Generate AI summary';}});
+$('demoToggle').addEventListener('click',()=>{const on=$('demoToggle').dataset.on!=='1';$('demoToggle').dataset.on=on?'1':'0';$('demoToggle').textContent=on?'Hide demo data':'Preview demo data';if(on){$('aiInsightCards').innerHTML='<div class="sp-card rounded-xl p-4"><div class="ai-chip">POSITIVE</div><div class="text-sm font-bold mt-3">Fast delivery</div><p class="text-xs sp-muted mt-1">Customers repeatedly praise speed and reliability.</p></div><div class="sp-card rounded-xl p-4"><div class="ai-chip">THEME</div><div class="text-sm font-bold mt-3">Customer support</div><p class="text-xs sp-muted mt-1">Support quality is a recurring discussion point.</p></div><div class="sp-card rounded-xl p-4"><div class="ai-chip">ACTION</div><div class="text-sm font-bold mt-3">Ask for more reviews</div><p class="text-xs sp-muted mt-1">Use QR and WhatsApp requests to increase response volume.</p></div>';}else $('aiInsightCards').innerHTML='';});
+
 db.auth.onAuthStateChange(async (event,session)=>{
   if(event==='PASSWORD_RECOVERY') setAuthMode('newPassword');
   else if(session && !currentUser) await loadDashboard(session.user);
@@ -388,7 +505,7 @@ db.auth.onAuthStateChange(async (event,session)=>{
 (async()=>{
   const params=new URLSearchParams(location.search);
   setAuthMode(params.get('mode')==='signup'?'signup':'login');
-  const initialPanel=(location.hash||'#overview').slice(1); if(['overview','customers','requests','reviews','widget'].includes(initialPanel)) activatePanel(initialPanel);
+  const initialPanel=(location.hash||'#overview').slice(1); if(['overview','customers','requests','reviews','widget','notifications'].includes(initialPanel)) activatePanel(initialPanel);
   const {data}=await db.auth.getSession();
   if(data.session) await loadDashboard(data.session.user);
 })();
