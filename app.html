@@ -25,7 +25,7 @@
 .sp-muted{color:#94a3b8}
 .sp-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#64748b}
 .sp-table{width:100%;border-collapse:collapse}.sp-table th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;text-align:left;padding:12px;border-bottom:1px solid #1e293b}.sp-table td{padding:15px 12px;border-bottom:1px solid #172033;color:#cbd5e1}.sp-table tr:last-child td{border-bottom:0}
-.sp-nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;color:#94a3b8;font-size:13px;font-weight:600}.sp-nav-item:hover,.sp-nav-item.active{background:#111c31;color:#fff}.sp-nav-item.active{box-shadow:inset 2px 0 #6366f1}
+.sp-nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;color:#94a3b8;font-size:13px;font-weight:600}.sp-nav-item:hover,.sp-nav-item.active{background:#111c31;color:#fff}.sp-nav-item.active{box-shadow:inset 2px 0 #6366f1}.dashboard-panel{display:none}.dashboard-panel.active{display:block}
 .sp-stat{position:relative;overflow:hidden}.sp-stat:after{content:"";position:absolute;right:-30px;top:-40px;width:110px;height:110px;border-radius:50%;background:rgba(99,102,241,.08)}
 @media(max-width:900px){.sp-sidebar{display:none}.sp-main{margin-left:0!important}.sp-mobile-nav{display:flex!important}.sp-table-wrap{overflow-x:auto}.sp-table{min-width:650px}}
 </style>
@@ -51,7 +51,7 @@
 <aside class="sp-sidebar fixed inset-y-0 left-0 z-40 w-64 border-r border-slate-800 bg-slate-950/95 p-4">
 <div class="flex items-center gap-3 px-2 py-3 mb-7"><div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 grid place-items-center">✦</div><span class="font-extrabold text-lg">StarPlus<span class="text-indigo-400">AI</span></span></div>
 <nav class="space-y-1">
-<a href="#overview" class="sp-nav-item active">▦ <span>Overview</span></a><a href="#customers" class="sp-nav-item">♙ <span>Customers</span></a><a href="#requests" class="sp-nav-item">↗ <span>Review Requests</span></a><a href="#reviews" class="sp-nav-item">★ <span>Incoming Reviews</span></a><a href="#widget" class="sp-nav-item">◈ <span>Widget & API</span></a>
+<a href="#overview" data-panel="overview" class="sp-nav-item active">▦ <span>Overview</span></a><a href="#customers" data-panel="customers" class="sp-nav-item">♙ <span>Customers</span></a><a href="#requests" data-panel="requests" class="sp-nav-item">↗ <span>Review Requests</span></a><a href="#reviews" data-panel="reviews" class="sp-nav-item">★ <span>Incoming Reviews</span></a><a href="#widget" data-panel="widget" class="sp-nav-item">◈ <span>Widget & API</span></a>
 </nav>
 <div class="absolute bottom-4 left-4 right-4 sp-card rounded-2xl p-4"><div class="sp-label">Workspace</div><div id="sidePlan" class="text-sm font-bold mt-1">Trial</div><div class="h-1.5 rounded-full bg-slate-800 mt-3 overflow-hidden"><div class="h-full bg-indigo-500 w-1/3"></div></div><a href="index.html" class="block text-xs text-slate-400 mt-3 hover:text-white">← Back to website</a></div>
 </aside>
@@ -61,7 +61,7 @@
 <div class="flex items-center gap-2"><a href="index.html" class="hidden sm:inline-flex sp-btn sp-secondary px-3 py-2 text-xs">View site</a><button id="logoutBtn" class="sp-btn sp-secondary px-3 py-2 text-xs">Log out</button></div>
 </header>
 <div class="p-5 lg:p-8 max-w-[1500px] mx-auto">
-<section id="overview" class="mb-8">
+<section id="overview" class="dashboard-panel active mb-8">
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-5"><div><span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Overview</span><h1 id="welcome" class="text-3xl lg:text-4xl font-extrabold tracking-tight mt-1">Welcome to StarPlusAI</h1><p class="sp-muted mt-2">Your command center for customer feedback and social proof.</p><div id="trialBanner" class="hidden mt-4 rounded-xl px-4 py-3 text-sm font-semibold" role="status"></div></div><button id="quickAddBtn" class="sp-btn sp-primary px-5 py-3">+ Add customer</button></div>
 </section>
 <section class="grid grid-cols-2 xl:grid-cols-4 gap-3 lg:gap-5 mb-8">
@@ -71,24 +71,24 @@
 <div class="sp-card sp-stat rounded-2xl p-5"><div class="sp-label">Current plan</div><div id="plan" class="text-3xl font-extrabold mt-2">Trial</div><div class="text-xs text-emerald-400 mt-1">3-day trial</div></div>
 </section>
 
-<section id="customers" class="sp-card rounded-2xl p-5 lg:p-6 mb-5">
+<section id="customers" class="dashboard-panel sp-card rounded-2xl p-5 lg:p-6 mb-5">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><span class="sp-label">Audience</span><h2 class="text-xl font-bold mt-1">Customers</h2><p class="sp-muted text-sm mt-1">Add customers and request feedback from them.</p></div><button id="addCustomerBtn" class="sp-btn sp-secondary px-4 py-2 text-sm">Add customer</button></div>
 <form id="customerForm" class="hidden grid grid-cols-1 md:grid-cols-4 gap-2 mt-5"><input id="customerName" class="sp-input" required maxlength="120" placeholder="Customer name"><input id="customerEmail" class="sp-input" type="email" maxlength="254" placeholder="Customer email"><input id="customerPhone" class="sp-input" type="tel" maxlength="40" placeholder="Phone (optional)"><div class="flex gap-2"><button class="sp-btn sp-primary px-4 py-2" type="submit">Save</button><button id="cancelCustomer" class="sp-btn sp-secondary px-4" type="button">Cancel</button></div></form>
 <div class="sp-table-wrap mt-5"><table class="sp-table"><thead><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Action</th></tr></thead><tbody id="customerRows"><tr><td colspan="4">Loading customers…</td></tr></tbody></table></div>
 </section>
 
-<section id="requests" class="sp-card rounded-2xl p-5 lg:p-6 mb-5">
+<section id="requests" class="dashboard-panel sp-card rounded-2xl p-5 lg:p-6 mb-5">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><span class="sp-label">Collection</span><h2 class="text-xl font-bold mt-1">Review requests</h2><p class="sp-muted text-sm mt-1">Create secure review links and send requests.</p></div><button id="requestBtn" class="sp-btn sp-primary px-4 py-2 text-sm">Send request</button></div>
 <form id="requestForm" class="hidden flex flex-col sm:flex-row gap-2 mt-5"><select id="requestCustomer" class="sp-input" required><option value="">Choose a customer</option></select><button class="sp-btn sp-primary px-4 py-2" type="submit">Create request</button><button id="cancelRequest" class="sp-btn sp-secondary px-4" type="button">Cancel</button></form>
 <div class="sp-table-wrap mt-5"><table class="sp-table"><thead><tr><th>Customer</th><th>Status</th><th>Created</th><th>Action</th></tr></thead><tbody id="requestRows"><tr><td colspan="4">Loading requests…</td></tr></tbody></table></div>
 </section>
 
-<section id="reviews" class="sp-card rounded-2xl p-5 lg:p-6 mb-5">
+<section id="reviews" class="dashboard-panel sp-card rounded-2xl p-5 lg:p-6 mb-5">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><span class="sp-label">Moderation</span><h2 class="text-xl font-bold mt-1">Incoming reviews</h2><p class="sp-muted text-sm mt-1">Approve or reject customer feedback before publication.</p></div><select id="reviewFilter" class="sp-input sm:w-44"><option value="all">All ratings</option><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select></div>
 <div id="reviewList" class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-5"><div class="empty-state">No reviews yet.</div></div>
 </section>
 
-<section id="widget" class="sp-card rounded-2xl p-5 lg:p-6">
+<section id="widget" class="dashboard-panel sp-card rounded-2xl p-5 lg:p-6">
 <span class="sp-label">Website integration</span><h2 class="text-xl font-bold mt-1">Widget & API</h2><p class="sp-muted text-sm mt-1">Embed approved StarPlusAI reviews on your website.</p>
 <div class="mt-5 rounded-2xl bg-slate-950 border border-slate-800 p-4"><div class="flex items-center justify-between gap-3"><div><div class="font-bold">Review widget</div><div class="text-xs sp-muted mt-1">One line of code</div></div><span class="text-xs text-emerald-400">Ready</span></div><textarea id="widgetCode" class="sp-input mt-4 font-mono text-xs min-h-28" readonly></textarea><button id="copyWidgetBtn" class="sp-btn sp-secondary px-4 py-2 text-sm mt-3" type="button">Copy widget code</button></div>
 </section>
@@ -143,6 +143,12 @@ async function requestWelcomeEmail(){
   }catch{}
 }
 
+function activatePanel(id){
+  document.querySelectorAll('.dashboard-panel').forEach(p=>p.classList.toggle('active',p.id===id));
+  document.querySelectorAll('.sp-nav-item[data-panel]').forEach(a=>a.classList.toggle('active',a.dataset.panel===id));
+  history.replaceState(null,'','#'+id);
+}
+document.querySelectorAll('.sp-nav-item[data-panel]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();activatePanel(a.dataset.panel)}));
 const toast = (message, type='success') => {
   const el = $('toast'); el.textContent = message; el.className = 'toast ' + type + ' show';
   clearTimeout(window.toastTimer); window.toastTimer = setTimeout(() => el.classList.remove('show'), 4200);
@@ -194,7 +200,7 @@ async function loadDashboard(user, isLogin=false) {
       banner.textContent = 'Your 3-day trial has ended. Choose a paid plan to continue using StarPlusAI.';
       banner.classList.remove('hidden','trial-active');
       banner.classList.add('trial-ended');
-      document.querySelectorAll('#customerPanel button, #customerPanel input, #customerPanel select, #requestBtn, #requestForm button, #requestForm select').forEach(el=>{el.disabled=true});
+      document.querySelectorAll('#customers button, #customers input, #customers select, #requestBtn, #requestForm button, #requestForm select').forEach(el=>{el.disabled=true});
     } else {
       const days = Math.ceil(remainingMs / 86400000);
       banner.textContent = 'Your 3-day free trial is active — ' + days + (days === 1 ? ' day' : ' days') + ' remaining.';
@@ -338,7 +344,7 @@ $('logoutBtn').addEventListener('click',async()=>{
 });
 
 $('addCustomerBtn').addEventListener('click',()=>show('customerForm'));
-$('quickAddBtn').addEventListener('click',()=>{show('customerForm');$('customerPanel').scrollIntoView({behavior:'smooth',block:'center'});});
+$('quickAddBtn').addEventListener('click',()=>{activatePanel('customers');show('customerForm');$('customers').scrollIntoView({behavior:'smooth',block:'center'});});
 $('cancelCustomer').addEventListener('click',()=>hide('customerForm'));
 
 $('customerForm').addEventListener('submit',async e=>{
@@ -382,6 +388,7 @@ db.auth.onAuthStateChange(async (event,session)=>{
 (async()=>{
   const params=new URLSearchParams(location.search);
   setAuthMode(params.get('mode')==='signup'?'signup':'login');
+  const initialPanel=(location.hash||'#overview').slice(1); if(['overview','customers','requests','reviews','widget'].includes(initialPanel)) activatePanel(initialPanel);
   const {data}=await db.auth.getSession();
   if(data.session) await loadDashboard(data.session.user);
 })();
