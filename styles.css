@@ -46,3 +46,280 @@
   .auth-card>p{margin-bottom:4px}
   .auth-form{margin-top:12px}
 }
+
+
+/* =========================================================
+   StarPlusAI visual upgrade — responsive SaaS marketing + dashboard
+   ========================================================= */
+:root{
+  --sp-blue:#1769e0;
+  --sp-blue-dark:#0d4fb5;
+  --sp-ink:#0b1728;
+  --sp-muted:#617187;
+  --sp-border:#e5ebf3;
+  --sp-surface:#ffffff;
+  --sp-soft:#f3f7fc;
+  --sp-green:#16834b;
+  --sp-shadow:0 20px 60px rgba(11,23,40,.09);
+}
+body{
+  background:
+    radial-gradient(circle at 85% 0%,rgba(23,105,224,.08),transparent 28rem),
+    #f7f9fc;
+  color:var(--sp-ink);
+}
+.site-header{
+  padding:14px max(20px,6%);
+  background:rgba(247,249,252,.86);
+  box-shadow:0 1px 0 rgba(11,23,40,.04);
+}
+.site-header nav{
+  gap:6px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding:4px 0;
+}
+.site-header nav::-webkit-scrollbar{display:none}
+.site-header nav a{
+  padding:9px 11px;
+  border-radius:9px;
+  white-space:nowrap;
+  transition:.18s ease;
+}
+.site-header nav a:hover{background:#eaf2ff;color:var(--sp-blue)}
+.site-header .nav-button{
+  padding:10px 15px;
+  box-shadow:0 7px 18px rgba(23,105,224,.2);
+}
+.logo{
+  letter-spacing:-.03em;
+  white-space:nowrap;
+}
+.hero{
+  max-width:1320px;
+  min-height:690px;
+  padding-top:100px;
+  padding-bottom:100px;
+  position:relative;
+}
+.hero-copy{position:relative;z-index:1}
+.hero h1{
+  max-width:780px;
+  font-weight:850;
+}
+.hero p{font-size:1.12rem;line-height:1.75}
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(145deg,#0b1728,#173b68);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 30px 80px rgba(11,23,40,.22);
+}
+.hero-card:before{
+  content:"";
+  position:absolute;
+  width:230px;height:230px;
+  right:-100px;top:-100px;
+  border-radius:50%;
+  background:rgba(76,145,245,.25);
+}
+.hero-card>*{position:relative}
+.hero-card .metric strong{font-size:3.4rem;letter-spacing:-.05em}
+.section{max-width:1320px;padding-top:95px;padding-bottom:95px}
+.section h2{max-width:850px;font-weight:820}
+.trust-strip{padding-top:35px;padding-bottom:50px}
+.trust-grid span{
+  transition:.18s ease;
+  box-shadow:0 5px 20px rgba(11,23,40,.03);
+}
+.trust-grid span:hover{transform:translateY(-2px);border-color:#c9d9ef}
+.steps article,.price-card,.feature-card{
+  box-shadow:0 8px 30px rgba(11,23,40,.035);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.steps article:hover,.price-card:hover,.feature-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 18px 40px rgba(11,23,40,.08);
+  border-color:#cddcf0;
+}
+.dark-section{
+  background:linear-gradient(135deg,#0b1728,#122c4a);
+  max-width:none;
+  position:relative;
+  overflow:hidden;
+}
+.dark-section:after{
+  content:"";
+  position:absolute;
+  width:420px;height:420px;
+  right:-180px;top:-160px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:50%;
+  box-shadow:0 0 0 70px rgba(255,255,255,.025),0 0 0 140px rgba(255,255,255,.015);
+}
+.product-preview{gap:70px}
+.dashboard-mock{
+  box-shadow:0 28px 70px rgba(11,23,40,.2);
+  border:1px solid #2d4a69;
+}
+.final-cta{
+  padding:70px 40px;
+  box-shadow:0 20px 50px rgba(23,105,224,.08);
+}
+footer{
+  background:#fff;
+  padding-top:42px;
+  padding-bottom:42px;
+}
+footer strong{color:var(--sp-ink);font-size:1rem}
+footer>div:first-child span{display:block;margin-top:5px}
+.button{
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 9px 22px rgba(11,23,40,.1);
+}
+.primary:hover{background:var(--sp-blue-dark)}
+.page-hero{
+  max-width:1320px;
+  padding-top:105px;
+  padding-bottom:65px;
+}
+.page-hero h1{font-weight:850;max-width:900px}
+.page-hero p{font-size:1.13rem;line-height:1.75}
+.feature-grid{
+  max-width:1320px;
+  padding-bottom:85px;
+}
+.feature-card{
+  min-height:190px;
+}
+.feature-card h2,.feature-card h3{letter-spacing:-.02em}
+.faq-list{
+  max-width:1000px;
+}
+.faq-list details{
+  box-shadow:0 6px 24px rgba(11,23,40,.035);
+  transition:.18s ease;
+}
+.faq-list details[open]{border-color:#c8daf2;box-shadow:0 12px 30px rgba(11,23,40,.06)}
+.pricing-grid{
+  max-width:1200px;
+  margin:0 auto;
+}
+.price-card.featured{
+  box-shadow:0 18px 45px rgba(23,105,224,.13);
+}
+.contact-grid{
+  max-width:1200px;
+  margin:0 auto;
+}
+.legal-copy{
+  background:#fff;
+  border:1px solid var(--sp-border);
+  border-radius:22px;
+  box-shadow:0 10px 35px rgba(11,23,40,.04);
+}
+
+/* Dashboard */
+.app{
+  max-width:1400px;
+  padding:38px max(20px,4%);
+}
+.dashboard-heading{
+  padding:28px 30px;
+  margin-bottom:22px;
+  background:linear-gradient(135deg,#0b1728,#173b68);
+  color:#fff;
+  border-radius:24px;
+  box-shadow:0 22px 60px rgba(11,23,40,.16);
+  align-items:center;
+}
+.dashboard-heading .eyebrow{color:#8db9ff}
+.dashboard-heading h1{letter-spacing:-.04em}
+.dashboard-heading p{color:#c7d5e5}
+.dashboard-heading .button{
+  flex-shrink:0;
+  background:#fff;
+  color:#0b1728!important;
+  border:0;
+}
+.dash{
+  gap:14px;
+}
+.dash-card{
+  position:relative;
+  overflow:hidden;
+  padding:21px;
+  border-radius:18px;
+  box-shadow:0 8px 28px rgba(11,23,40,.045);
+  transition:.18s ease;
+}
+.dash-card:hover{transform:translateY(-2px);box-shadow:0 15px 35px rgba(11,23,40,.08)}
+.dash-card:after{
+  content:"";
+  position:absolute;
+  width:70px;height:70px;
+  right:-25px;bottom:-25px;
+  border-radius:50%;
+  background:#edf4ff;
+}
+.dash-card span{position:relative;z-index:1;color:#66768a;font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.dash-card strong{position:relative;z-index:1;margin-top:6px;font-size:2.25rem;letter-spacing:-.04em}
+.panel{
+  border-radius:20px;
+  padding:26px;
+  box-shadow:0 8px 28px rgba(11,23,40,.04);
+}
+.panel-head h2{letter-spacing:-.025em}
+.inline-form{padding:15px;background:#f7f9fc;border-radius:14px}
+table{min-width:680px}
+th{background:#f8fafc}
+tbody tr:hover{background:#fafcff}
+.status-badge{border:1px solid #e1e8f0}
+.status-badge.pending{background:#fff7df;color:#916300}
+.status-badge.approved{background:#e7f7ed;color:#16733b}
+.review-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+.review-card{
+  background:#fbfcfe;
+  box-shadow:none;
+  transition:.18s ease;
+}
+.review-card:hover{border-color:#cbdcf1;background:#fff}
+.widget-preview{
+  background:#f8fbff;
+  border-style:solid;
+  border-color:#d7e4f3;
+  align-items:center;
+}
+.trial-banner{box-shadow:0 5px 18px rgba(11,23,40,.04)}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-card{max-width:680px}
+  .review-list{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .site-header{align-items:center}
+  .site-header nav{max-width:58vw}
+  .hero{padding-top:65px;padding-bottom:65px}
+  .hero h1{font-size:clamp(2.35rem,12vw,3.6rem)}
+  .hero-actions .button{width:100%;text-align:center}
+  .section{padding-top:65px;padding-bottom:65px}
+  .page-hero{padding-top:65px;padding-bottom:45px}
+  .dashboard-heading{padding:23px 20px;border-radius:18px}
+  .dash-card strong{font-size:1.9rem}
+  .panel{padding:20px;border-radius:16px}
+}
+@media(max-width:520px){
+  .site-header nav{max-width:52vw}
+  .site-header nav a:not(.nav-button){display:inline-block}
+  .site-header nav a{font-size:.78rem;padding:7px 8px}
+  .site-header .nav-button{font-size:.78rem;padding:8px 10px}
+  .hero-card{padding:22px}
+  .hero-card .metric strong{font-size:2.6rem}
+  .trust-grid{grid-template-columns:1fr 1fr}
+  .final-cta{padding:50px 22px}
+  footer{padding-left:5%;padding-right:5%}
+}
