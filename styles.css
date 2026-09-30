@@ -323,3 +323,199 @@ tbody tr:hover{background:#fafcff}
   .final-cta{padding:50px 22px}
   footer{padding-left:5%;padding-right:5%}
 }
+
+/* =========================================================
+   STARPLUSAI SITE-WIDE DESIGN SYSTEM
+   Applies the current dark SaaS landing-page design to
+   authenticated pages, review pages, contact and legal pages.
+   Existing functional selectors are intentionally preserved.
+   ========================================================= */
+:root{
+  --sp-bg:#020617;
+  --sp-bg2:#0f172a;
+  --sp-surface:#0f172a;
+  --sp-surface2:#111c31;
+  --sp-border:#1e293b;
+  --sp-text:#f8fafc;
+  --sp-muted:#94a3b8;
+  --sp-brand:#6366f1;
+  --sp-brand2:#4f46e5;
+  --sp-green:#34d399;
+  --sp-red:#fb7185;
+  --sp-shadow:0 24px 70px rgba(0,0,0,.28);
+}
+html{background:var(--sp-bg);color-scheme:dark}
+body{
+  background:
+    radial-gradient(circle at 15% 0%,rgba(99,102,241,.13),transparent 28rem),
+    radial-gradient(circle at 90% 15%,rgba(79,70,229,.09),transparent 26rem),
+    var(--sp-bg)!important;
+  color:var(--sp-text)!important;
+}
+.site-header{
+  position:sticky;top:0;z-index:50;
+  padding:14px max(16px,5%);
+  background:rgba(2,6,23,.86)!important;
+  border-bottom:1px solid rgba(30,41,59,.9)!important;
+  backdrop-filter:blur(18px);
+  box-shadow:none!important;
+}
+.logo{color:#fff!important}
+.site-header nav a{color:#cbd5e1!important}
+.site-header nav a:hover{background:#111c31!important;color:#fff!important}
+.nav-button,.primary{
+  background:var(--sp-brand2)!important;
+  color:#fff!important;
+  border-color:transparent!important;
+}
+.nav-button:hover,.primary:hover{background:var(--sp-brand)!important}
+.secondary{
+  background:#111827!important;
+  color:#e2e8f0!important;
+  border-color:#334155!important;
+}
+.button{border-radius:12px}
+.app{max-width:1280px;padding:52px 5% 80px}
+.auth-shell{background:transparent!important}
+.auth-card,.panel,.dash-card,.review-card,.price-card,.feature-card,.steps article,.faq-list details,.placeholder-card{
+  background:rgba(15,23,42,.88)!important;
+  border-color:#1e293b!important;
+  color:#f8fafc!important;
+  box-shadow:var(--sp-shadow)!important;
+}
+.auth-card h1,.auth-card h2,.auth-card h3,.panel h2,.panel h3,.dashboard-heading h1,
+.review-card h1,.review-card h2,.price-card h2,.feature-card h2,.feature-card h3,
+.steps h2,.steps h3,.legal-copy h2{color:#fff!important}
+.auth-card>p,.dashboard-heading p,.panel-head p,.feature-card p,.steps p,.price-card p,
+.review-card>p,.page-hero p,.legal-copy p,.faq-list p,.placeholder-card,
+.dash-card span,.widget-preview span{color:#94a3b8!important}
+.auth-form label,.review-card label{color:#cbd5e1!important}
+.auth-form input,.inline-form input,.inline-form select,.compact-select,.review-card textarea,
+.widget-code{
+  background:#020617!important;
+  color:#f8fafc!important;
+  border-color:#334155!important;
+}
+.auth-form input:focus,.review-card textarea:focus{
+  border-color:var(--sp-brand)!important;
+  box-shadow:0 0 0 3px rgba(99,102,241,.18)!important;
+}
+.text-button{color:#818cf8!important}
+.text-button:hover{color:#a5b4fc!important}
+.signup-checks{
+  background:#0b1222!important;border-color:#263449!important;color:#94a3b8!important
+}
+.verification-notice{
+  background:rgba(16,185,129,.08)!important;border-color:rgba(52,211,153,.28)!important;color:#a7f3d0!important
+}
+.turnstile-widget{background:transparent}
+.dashboard-heading{margin-bottom:34px}
+.dashboard-heading h1{letter-spacing:-.04em}
+.dash-card{
+  padding:24px!important;
+  position:relative;overflow:hidden;
+}
+.dash-card:before{
+  content:"";position:absolute;inset:0 auto auto 0;width:100%;height:2px;
+  background:linear-gradient(90deg,var(--sp-brand),transparent);
+}
+.dash-card strong{color:#fff!important;font-size:2.25rem}
+.panel{padding:28px!important}
+.panel-head h2{color:#fff!important}
+table{color:#e2e8f0}
+th{color:#64748b!important;border-color:#1e293b!important}
+td{color:#cbd5e1!important;border-color:#1e293b!important}
+.status-badge{background:#1e293b!important;color:#cbd5e1!important}
+.status-badge.completed{background:rgba(16,185,129,.13)!important;color:#6ee7b7!important}
+.status-badge.sent{background:rgba(99,102,241,.14)!important;color:#a5b4fc!important}
+.status-badge.failed{background:rgba(244,63,94,.12)!important;color:#fda4af!important}
+.review-card{box-shadow:none!important}
+.empty-state{background:#0b1222!important;color:#94a3b8!important}
+.widget-preview{background:#0b1222!important;border-color:#334155!important}
+.widget-code{color:#cbd5e1!important}
+.trial-active{background:rgba(16,185,129,.1)!important;color:#6ee7b7!important;border-color:rgba(52,211,153,.25)!important}
+.trial-ended{background:rgba(244,63,94,.1)!important;color:#fda4af!important;border-color:rgba(251,113,133,.25)!important}
+
+.page-hero{
+  position:relative;
+  padding-top:105px;
+  padding-bottom:70px;
+  max-width:1280px;
+}
+.page-hero:before{
+  content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);
+  width:600px;height:380px;border-radius:999px;background:rgba(99,102,241,.13);
+  filter:blur(120px);pointer-events:none;
+}
+.page-hero>*{position:relative}
+.page-hero h1{
+  color:#fff!important;font-weight:850!important;letter-spacing:-.045em!important
+}
+.eyebrow{color:#818cf8!important}
+.feature-grid{max-width:1280px;padding-bottom:90px}
+.feature-card,.steps article,.price-card{
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.feature-card:hover,.steps article:hover,.price-card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(99,102,241,.45)!important;
+  box-shadow:0 25px 60px rgba(0,0,0,.28)!important;
+}
+.dark-section{
+  background:linear-gradient(135deg,#020617,#0f172a)!important;
+  color:#fff!important;border-top:1px solid #1e293b;border-bottom:1px solid #1e293b;
+}
+.dark-section .steps article{background:#0f172a!important}
+.trust-strip{background:#0b1222!important;border-top:1px solid #1e293b;border-bottom:1px solid #1e293b}
+.trust-grid span{
+  background:#0f172a!important;border-color:#1e293b!important;color:#cbd5e1!important
+}
+.dashboard-mock,.hero-card{
+  background:linear-gradient(145deg,#020617,#111c31)!important;
+  border-color:#263449!important;
+}
+.final-cta,.guarantee{
+  background:linear-gradient(135deg,rgba(79,70,229,.2),rgba(15,23,42,.96))!important;
+  border:1px solid rgba(99,102,241,.25)!important;
+  color:#fff!important;
+}
+.final-cta p,.guarantee p{color:#94a3b8!important}
+.faq-list details{background:#0f172a!important}
+.faq-list summary{color:#f8fafc!important}
+.faq-list details[open]{border-color:rgba(99,102,241,.45)!important}
+.contact-grid .feature-card{background:#0f172a!important}
+.review-page{background:transparent!important}
+.review-shell{width:min(680px,100%)}
+.review-card{background:#0f172a!important}
+.rating-picker button{color:#475569}
+.rating-picker button.selected{color:#fbbf24}
+.legal-copy{
+  background:#0f172a!important;border-color:#1e293b!important;border-radius:22px;
+  padding:34px!important;box-shadow:var(--sp-shadow)
+}
+.legal-copy h2{margin-top:28px}
+footer{
+  background:#020617!important;border-top:1px solid #1e293b!important;
+  color:#64748b!important;
+}
+footer strong{color:#fff!important}
+.footer-links a{color:#94a3b8!important}
+.footer-links a:hover{color:#fff!important}
+footer a{color:#94a3b8}
+footer a:hover{color:#fff}
+.toast{box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.toast.success{background:#047857!important}
+.toast.error{background:#be123c!important}
+@media(max-width:800px){
+  .site-header{padding:12px 16px}
+  .app{padding:34px 16px 60px}
+  .page-hero{padding:68px 16px 45px}
+  .feature-grid{padding-left:16px;padding-right:16px}
+  .panel{padding:20px!important}
+  .dashboard-heading{align-items:stretch}
+  .dashboard-heading .button{width:100%}
+}
+@media(max-width:500px){
+  .auth-card{border-radius:20px!important;padding:22px 18px!important}
+  .legal-copy{padding:22px!important}
+}
