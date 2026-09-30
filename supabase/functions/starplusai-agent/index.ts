@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"content-type","Access-Control-Allow-Methods":"POST,OPTIONS","Content-Type":"application/json"};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:cors});
+
 const SYSTEM_PROMPT=`You are the official StarPlusAI Assistant for the StarPlusAI customer-review SaaS.
 
 Product facts:
@@ -13,8 +14,8 @@ Product facts:
 - Only approved reviews are returned by the public review widget feed.
 - Do not invent features, prices, policies, integrations, guarantees, customer stories, or account data. If the answer is not in your known facts, say that you do not have enough information and direct the user to the Contact page or dashboard where appropriate.
 - Never ask users for passwords, API keys, secret keys, or payment-card details.
-- Be concise, friendly, professional, and practical. If the user asks how to do something, give numbered steps.
-`;
+- Be concise, friendly, professional, and practical. If the user asks how to do something, give numbered steps.`;
+
 Deno.serve(async(req:Request)=>{
  if(req.method==='OPTIONS') return new Response('ok',{headers:cors});
  if(req.method!=='POST') return json({error:'Method not allowed.'},405);
@@ -24,13 +25,35 @@ Deno.serve(async(req:Request)=>{
   if(!messages.length) return json({error:'A message is required.'},400);
   const safe=messages.slice(-10).filter((m:any)=>m&&['user','assistant'].includes(m.role)&&typeof m.content==='string').map((m:any)=>({role:m.role,content:m.content.slice(0,2000)}));
   if(!safe.length||safe[safe.length-1].role!=='user') return json({error:'Invalid conversation.'},400);
-  const apiKey=Deno.env.get('OPENAI_API_KEY');
+
+  const apiKey=Deno.env.get('GEMINI_API_KEY');
   if(!apiKey) return json({error:'The AI assistant is not configured yet. Please try again later.'},503);
-  const model=Deno.env.get('OPENAI_MODEL')||'gpt-5-mini';
-  const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model,instructions:SYSTEM_PROMPT,input:safe,max_output_tokens:500})});
+
+  const model=Deno.env.get('GEMINI_MODEL')||'gemini-2.5-flash-lite';
+  const input=safe.map((m:any)=>({role:m.role==='assistant'?'model':'user',content:[{type:'text',text:m.content}]}));
+
+  const response=await fetch('https://generativelanguage.googleapis.com/v1/interactions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-goog-api-key':apiKey},
+    body:JSON.stringify({
+      model,
+      input,
+      system_instruction:SYSTEM_PROMPT,
+      store:false
+    })
+  });
   const data=await response.json();
   if(!response.ok) return json({error:'The AI service could not complete the request.'},502);
-  const reply=typeof data.output_text==='string'?data.output_text.trim():'';
+
+  let reply='';
+  if(typeof data.output_text==='string') reply=data.output_text.trim();
+  if(!reply && Array.isArray(data.steps)){
+    const outputs=data.steps.filter((s:any)=>s?.type==='model_output');
+    const last=outputs[outputs.length-1];
+    if(Array.isArray(last?.content)){
+      reply=last.content.filter((c:any)=>c?.type==='text'&&typeof c.text==='string').map((c:any)=>c.text).join('').trim();
+    }
+  }
   if(!reply) return json({error:'The assistant returned an empty response.'},502);
   return json({reply});
  }catch(e){return json({error:'The assistant is temporarily unavailable.'},500);}
