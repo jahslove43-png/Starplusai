@@ -3,7 +3,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"content-type","Access-Control-Allow-Methods":"POST,OPTIONS","Content-Type":"application/json"};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:cors});
 
-const SYSTEM_PROMPT=\`You are the official StarPlusAI Assistant for a customer-review SaaS.
+const SYSTEM_PROMPT=`You are the official StarPlusAI Assistant for a customer-review SaaS.
 
 Confirmed product facts:
 - StarPlusAI helps businesses collect customer reviews, manage customers and review requests, moderate incoming reviews, and showcase approved reviews through a website widget.
@@ -27,7 +27,7 @@ Behavior:
 - Never guess about features, integrations, policies, prices, guarantees, or account information not listed above.
 - Never request private credentials or secret keys.
 - Never claim an action happened unless the website actually reports it.
-- Keep answers concise, friendly, professional, and practical. Use numbered steps for how-to questions and bullets for comparisons.\`;
+- Keep answers concise, friendly, professional, and practical. Use numbered steps for how-to questions and bullets for comparisons.`;
 
 Deno.serve(async(req:Request)=>{
  if(req.method==='OPTIONS') return new Response('ok',{headers:cors});
