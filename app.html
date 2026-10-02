@@ -419,8 +419,9 @@ $('newPasswordForm').addEventListener('submit', async e => {
   toast('Password updated successfully.'); setAuthMode('login');
 });
 
-$('appResendVerification').addEventListener('click',async()=>{const email=$('appVerificationEmail').textContent.trim()||$('loginEmail').value.trim()||$('signupEmail').value.trim();if(!email)return toast('Enter your email first.','error');if(!turnstileTokens.login&&!turnstileTokens.signup)return toast('Complete the security verification first.','error');const captchaToken=turnstileTokens.login||turnstileTokens.signup;const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:window.location.origin+'/app.html'}});if(error)return toast(error.message,'error');toast('A new verification email has been sent.');});
-$('appGoogleButton').addEventListener('click',async()=>{const b=$('appGoogleButton');b.disabled=true;b.style.opacity='.65';try{const{error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:new URL('app.html',document.baseURI).href}});if(error)throw error}catch(e){toast(e.message||'Google sign-in failed.','error');b.disabled=false;b.style.opacity='1';}});\n$('showSignup').addEventListener('click',()=>setAuthMode('signup'));
+$('appResendVerification').addEventListener('click',async()=>{const email=$('appVerificationEmail').textContent.trim()||$('loginEmail').value.trim()||$('signupEmail').value.trim();if(!email)return toast('Enter your email first.','error');const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:window.location.origin+'/app.html'}});if(error)return toast(error.message,'error');toast('A new verification email has been sent.');});
+$('appGoogleButton').addEventListener('click',async()=>{const b=$('appGoogleButton');b.disabled=true;b.style.opacity='.65';try{const{error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:new URL('app.html',document.baseURI).href}});if(error)throw error}catch(e){toast(e.message||'Google sign-in failed.','error');b.disabled=false;b.style.opacity='1';}});
+$('showSignup').addEventListener('click',()=>setAuthMode('signup'));
 $('showLogin').addEventListener('click',()=>setAuthMode('login'));
 $('showReset').addEventListener('click',()=>setAuthMode('reset'));
 
