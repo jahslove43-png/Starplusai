@@ -51,7 +51,7 @@
 <div class="flex items-center gap-3 mb-8"><div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 grid place-items-center shadow-lg shadow-indigo-500/25">✦</div><span class="font-extrabold text-xl">StarPlus<span class="text-indigo-400">AI</span></span></div>
 <span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Business workspace</span>
 <h1 id="authTitle" class="text-3xl font-extrabold tracking-tight mt-2">Welcome back</h1><p id="authSubtitle" class="sp-muted mt-2">Log in to your review-management workspace.</p>
-<form id="loginForm" class="space-y-4 mt-7"><label class="block text-sm font-semibold text-slate-300">Email<input id="loginEmail" class="sp-input mt-2" type="email" required autocomplete="email" placeholder="you@example.com"></label><label class="block text-sm font-semibold text-slate-300">Password<div class="relative"><input id="loginPassword" class="sp-input mt-2 pr-12" type="password" required autocomplete="current-password" placeholder="Your password"><button class="absolute right-3 top-4 text-slate-500" type="button" data-password-toggle="loginPassword">👁</button></div></label><div id="appTurnstileWidget" class="turnstile-widget"></div><button class="sp-btn sp-primary w-full py-3.5" type="submit">Log in</button></form>
+<form id="loginForm" class="space-y-4 mt-7"><label class="block text-sm font-semibold text-slate-300">Email<input id="loginEmail" class="sp-input mt-2" type="email" required autocomplete="email" placeholder="you@example.com"></label><label class="block text-sm font-semibold text-slate-300">Password<div class="relative"><input id="loginPassword" class="sp-input mt-2 pr-12" type="password" required autocomplete="current-password" placeholder="Your password"><button class="absolute right-3 top-4 text-slate-500" type="button" data-password-toggle="loginPassword">👁</button></div></label><button class="sp-btn sp-primary w-full py-3.5" type="submit">Log in</button><div class="flex items-center gap-3 text-xs sp-muted"><span class="h-px flex-1 bg-slate-700"></span><span>OR</span><span class="h-px flex-1 bg-slate-700"></span></div><button id="appGoogleButton" class="w-full py-3.5 rounded-xl border border-slate-700 bg-white text-slate-900 font-bold flex items-center justify-center gap-3 hover:shadow-lg transition" type="button"><span class="text-lg font-extrabold">G</span><span>Continue with Google</span></button></form>
 <form id="signupForm" class="auth-form hidden space-y-4 mt-7"><label class="block text-sm font-semibold text-slate-300">Business name<input id="businessName" class="sp-input mt-2" type="text" required placeholder="Your business"></label><label class="block text-sm font-semibold text-slate-300">Email<input id="signupEmail" class="sp-input mt-2" type="email" required placeholder="you@example.com"></label><label class="block text-sm font-semibold text-slate-300">Password<input id="signupPassword" class="sp-input mt-2" type="password" required minlength="8" placeholder="At least 8 characters"></label><div id="appVerificationNotice" class="hidden text-sm rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-200"><strong>Verify your email to activate your account</strong><span class="block mt-1">Verification email sent to <span id="appVerificationEmail"></span>.</span><button id="appResendVerification" type="button" class="text-indigo-300 mt-2">Resend verification email</button></div><div id="appSignupTurnstileWidget"></div><button class="sp-btn sp-primary w-full py-3.5" type="submit">Create account</button></form>
 <form id="resetForm" class="hidden space-y-4 mt-7"><label class="block text-sm font-semibold text-slate-300">Email<input id="resetEmail" class="sp-input mt-2" type="email" required placeholder="you@example.com"></label><div id="appResetTurnstileWidget"></div><button class="sp-btn sp-primary w-full py-3.5" type="submit">Send reset link</button></form>
 <form id="newPasswordForm" class="hidden space-y-4 mt-7"><label class="block text-sm font-semibold text-slate-300">New password<input id="newPassword" class="sp-input mt-2" type="password" required minlength="8"></label><button class="sp-btn sp-primary w-full py-3.5" type="submit">Update password</button></form>
@@ -141,30 +141,6 @@ const $ = id => document.getElementById(id);
 document.querySelectorAll("[data-password-toggle]").forEach(btn=>{btn.addEventListener("click",()=>{const input=document.getElementById(btn.dataset.passwordToggle);const showing=input.type==="text";input.type=showing?"password":"text";btn.textContent=showing?"👁":"🙈";btn.setAttribute("aria-label",showing?"Show password":"Hide password");btn.setAttribute("aria-pressed",String(!showing));});});
 let currentUser = null;
 let currentReviews = [];
-const TURNSTILE_SITE_KEY="0x4AAAAAAFFE1nC5af_a6XmH";
-const turnstileTokens={login:"",signup:"",reset:""};
-const turnstileWidgets={};
-window.appTurnstileSuccess=(token,action)=>{turnstileTokens[action]=token};
-window.appTurnstileExpired=(action)=>{turnstileTokens[action]=""};
-window.appTurnstileError=(action)=>{turnstileTokens[action]=""};
-function renderAppTurnstile(action,elementId){
-  const el=$(elementId);
-  if(!el)return;
-  if(!window.turnstile){setTimeout(()=>renderAppTurnstile(action,elementId),250);return}
-  window.turnstile.ready(()=>{
-    if(turnstileWidgets[action]!=null){
-      try{window.turnstile.remove(turnstileWidgets[action])}catch{}
-      turnstileWidgets[action]=null;
-      turnstileTokens[action]="";
-    }
-    turnstileWidgets[action]=window.turnstile.render(el,{sitekey:TURNSTILE_SITE_KEY,callback:(token)=>window.appTurnstileSuccess(token,action),expiredCallback:()=>window.appTurnstileExpired(action),errorCallback:()=>window.appTurnstileError(action),theme:"auto"});
-  });
-}
-function resetAppTurnstile(action){
-  turnstileTokens[action]="";
-  if(window.turnstile&&turnstileWidgets[action]!=null)window.turnstile.reset(turnstileWidgets[action]);
-}
-
 
 async function markUserActivity(user, isLogin=false){
   if(!user?.id) return;
@@ -205,7 +181,7 @@ function setAuthMode(mode) {
     $('authTitle').textContent='Create your account';
     $('authSubtitle').textContent='Start your 3-day free trial and review-management workspace.';
   } else if (mode === 'reset') {
-    show('resetForm'); show('showLogin'); setTimeout(()=>renderAppTurnstile('reset','appResetTurnstileWidget'),50);
+    show('resetForm'); show('showLogin');
     $('authTitle').textContent='Reset your password';
     $('authSubtitle').textContent='We will email you a secure password-reset link.';
   } else if (mode === 'newPassword') {
@@ -213,7 +189,7 @@ function setAuthMode(mode) {
     $('authTitle').textContent='Choose a new password';
     $('authSubtitle').textContent='Set a new password for your StarPlusAI account.';
   } else {
-    show('loginForm'); show('showSignup'); setTimeout(()=>renderAppTurnstile('login','appTurnstileWidget'),50);
+    show('loginForm'); show('showSignup');
     $('authTitle').textContent='Welcome back';
     $('authSubtitle').textContent='Log in to your review-management workspace.';
   }
@@ -416,9 +392,8 @@ function exportSocialGraphic(){
 $('signupForm').addEventListener('submit', async e => {
   e.preventDefault();
   const businessName=$('businessName').value.trim(), email=$('signupEmail').value.trim(), password=$('signupPassword').value;
-  if(!turnstileTokens.signup) return toast('Complete the security verification first.','error');
   if(password.length < 8) return toast('Password must be at least 8 characters.', 'error');
-  const { data, error } = await db.auth.signUp({email,password,options:{captchaToken:turnstileTokens.signup,data:{business_name:businessName}}});
+  const { data, error } = await db.auth.signUp({email,password,options:{data:{business_name:businessName}}});
   if(error) return toast(error.message,'error');
   if(!data.user) return toast('Account could not be created. Please try again.','error');
   if(data.session) { toast('Account created successfully.'); await loadDashboard(data.user); }
@@ -427,16 +402,14 @@ $('signupForm').addEventListener('submit', async e => {
 
 $('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
-  if(!turnstileTokens.login) return toast('Complete the security verification first.','error');
-  const {data,error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value,captchaToken:turnstileTokens.login});
+  const {data,error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});
   if(error){if(/confirm|verified/i.test(error.message||"")){ $('appVerificationEmail').textContent=$('loginEmail').value.trim(); show('appVerificationNotice'); } return toast('Login failed: '+error.message,'error');}
   toast('Logged in successfully.'); await loadDashboard(data.user,true);
 });
 
 $('resetForm').addEventListener('submit', async e => {
   e.preventDefault();
-  if(!turnstileTokens.reset) return toast('Complete the security verification first.','error');
-  const {error}=await db.auth.resetPasswordForEmail($('resetEmail').value.trim(),{redirectTo:window.location.origin+'/app.html',captchaToken:turnstileTokens.reset});
+  const {error}=await db.auth.resetPasswordForEmail($('resetEmail').value.trim(),{redirectTo:window.location.origin+'/app.html'});
   if(error) return toast(error.message,'error'); toast('Password reset link sent. Check your email.');
 });
 
@@ -448,7 +421,7 @@ $('newPasswordForm').addEventListener('submit', async e => {
 });
 
 $('appResendVerification').addEventListener('click',async()=>{const email=$('appVerificationEmail').textContent.trim()||$('loginEmail').value.trim()||$('signupEmail').value.trim();if(!email)return toast('Enter your email first.','error');if(!turnstileTokens.login&&!turnstileTokens.signup)return toast('Complete the security verification first.','error');const captchaToken=turnstileTokens.login||turnstileTokens.signup;const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:window.location.origin+'/app.html',captchaToken}});if(error)return toast(error.message,'error');toast('A new verification email has been sent.');});
-$('showSignup').addEventListener('click',()=>setAuthMode('signup'));
+$('appGoogleButton').addEventListener('click',async()=>{const b=$('appGoogleButton');b.disabled=true;b.style.opacity='.65';try{const{error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:new URL('app.html',document.baseURI).href}});if(error)throw error}catch(e){toast(e.message||'Google sign-in failed.','error');b.disabled=false;b.style.opacity='1';}});\n$('showSignup').addEventListener('click',()=>setAuthMode('signup'));
 $('showLogin').addEventListener('click',()=>setAuthMode('login'));
 $('showReset').addEventListener('click',()=>setAuthMode('reset'));
 
