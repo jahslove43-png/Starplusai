@@ -8,64 +8,16 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>tailwind.config={theme:{extend:{colors:{brand:{500:'#6366f1',600:'#4f46e5',700:'#4338ca'}}}}}</script>
-<style>body{font-family:Inter,system-ui,sans-serif}.glass{background:rgba(15,23,42,.82);backdrop-filter:blur(18px)}.plan.active{border-color:#6366f1;box-shadow:0 0 0 1px #6366f1,0 20px 60px rgba(79,70,229,.15)}</style>
+<style>body{font-family:Inter,system-ui,sans-serif}.plan.active{border-color:#6366f1;box-shadow:0 0 0 1px #6366f1,0 20px 60px rgba(79,70,229,.15)}</style>
 </head>
 <body class="min-h-screen bg-slate-950 text-white">
 <div class="min-h-screen lg:grid lg:grid-cols-[1fr_460px]">
-<section class="hidden lg:flex relative overflow-hidden p-12 items-center">
-<div class="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-indigo-600/15 blur-[120px]"></div>
-<div class="relative max-w-xl mx-auto">
-<a href="index.html" class="inline-flex items-center gap-2 font-extrabold text-xl">✦ StarPlus<span class="text-indigo-400">AI</span></a>
-<p class="mt-16 text-xs uppercase tracking-[.2em] text-indigo-400 font-bold">Upgrade your review workflow</p>
-<h1 class="mt-4 text-5xl font-extrabold tracking-tight leading-tight">Turn customer feedback into visible trust.</h1>
-<p class="mt-6 text-slate-400 text-lg leading-relaxed">Choose a StarPlusAI plan and keep customer collection, moderation, AI insights and website social proof in one workspace.</p>
-<div class="mt-10 space-y-4 text-sm text-slate-300">
-<div class="flex gap-3"><span class="text-emerald-400">✓</span> Customer and review-request management</div>
-<div class="flex gap-3"><span class="text-emerald-400">✓</span> Review moderation and AI assistance</div>
-<div class="flex gap-3"><span class="text-emerald-400">✓</span> Embeddable social-proof widget</div>
-</div>
-</div></section>
-<main class="flex items-center justify-center p-5 sm:p-8">
-<div class="w-full max-w-md">
-<div class="lg:hidden mb-8"><a href="index.html" class="font-extrabold text-xl">✦ StarPlus<span class="text-indigo-400">AI</span></a></div>
-<div class="mb-7"><a href="index.html" class="text-sm text-slate-500 hover:text-white">← Back to StarPlusAI</a><h2 class="mt-5 text-3xl font-extrabold">Choose your plan</h2><p class="mt-2 text-slate-400">Your account stays connected to your StarPlusAI workspace.</p></div>
-<div id="authNotice" class="hidden mb-5 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-200"></div>
-<div class="space-y-3">
-<button data-plan="starter" class="plan w-full text-left rounded-2xl border border-slate-800 bg-slate-900/70 p-5 transition hover:border-slate-600">
-<div class="flex items-center justify-between"><div><span class="font-bold text-lg">Starter</span><span class="ml-2 text-xs text-slate-500">50 requests/month</span></div><span class="text-xl font-extrabold">$29</span></div><p class="mt-2 text-sm text-slate-500">Review management, customers and standard widget.</p></button>
-<button data-plan="growth" class="plan active w-full text-left rounded-2xl border p-5 transition hover:border-indigo-400 bg-slate-900/70">
-<div class="flex items-center justify-between"><div><span class="font-bold text-lg">Growth</span><span class="ml-2 text-xs text-indigo-300">Most popular</span></div><span class="text-xl font-extrabold">$79</span></div><p class="mt-2 text-sm text-slate-500">250 requests/month, custom branding and priority support.</p></button>
-<button data-plan="pro" class="plan w-full text-left rounded-2xl border border-slate-800 bg-slate-900/70 p-5 transition hover:border-slate-600">
-<div class="flex items-center justify-between"><div><span class="font-bold text-lg">Pro</span><span class="ml-2 text-xs text-slate-500">Unlimited requests</span></div><span class="text-xl font-extrabold">$199</span></div><p class="mt-2 text-sm text-slate-500">Everything in Growth plus API access and manager support.</p></button>
-</div>
-<div class="mt-6 rounded-2xl border border-slate-800 bg-slate-900/50 p-5">
-<div class="flex justify-between text-sm"><span class="text-slate-400">Selected plan</span><strong id="selectedPlan">Growth</strong></div>
-<div class="flex justify-between mt-3"><span class="text-slate-400">Billing</span><strong>Monthly</strong></div>
-<div class="h-px bg-slate-800 my-4"></div>
-<div class="flex justify-between items-end"><span class="text-slate-400">Total</span><span id="selectedPrice" class="text-2xl font-extrabold">$79/month</span></div>
-</div>
-<button id="payButton" class="mt-5 w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed py-4 font-bold shadow-lg shadow-indigo-600/20">Continue to secure checkout</button>
-<p class="mt-4 text-center text-xs text-slate-600">Payments are processed securely by Paystack. StarPlusAI does not store card details.</p>
-</div>
-</main></div>
+<section class="hidden lg:flex relative overflow-hidden p-12 items-center"><div class="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-indigo-600/15 blur-[120px]"></div><div class="relative max-w-xl mx-auto"><a href="index.html" class="inline-flex items-center gap-2 font-extrabold text-xl">✦ StarPlus<span class="text-indigo-400">AI</span></a><p class="mt-16 text-xs uppercase tracking-[.2em] text-indigo-400 font-bold">Upgrade your review workflow</p><h1 class="mt-4 text-5xl font-extrabold tracking-tight leading-tight">Turn customer feedback into visible trust.</h1><p class="mt-6 text-slate-400 text-lg leading-relaxed">Choose a StarPlusAI plan and keep customer collection, moderation, AI insights and website social proof in one workspace.</p><div class="mt-10 space-y-4 text-sm text-slate-300"><div>✓ Customer and review-request management</div><div>✓ Review moderation and AI assistance</div><div>✓ Embeddable social-proof widget</div></div></div></section>
+<main class="flex items-center justify-center p-5 sm:p-8"><div class="w-full max-w-md"><div class="lg:hidden mb-8"><a href="index.html" class="font-extrabold text-xl">✦ StarPlus<span class="text-indigo-400">AI</span></a></div><div class="mb-7"><a href="index.html" class="text-sm text-slate-500 hover:text-white">← Back to StarPlusAI</a><h2 class="mt-5 text-3xl font-extrabold">Choose your plan</h2><p class="mt-2 text-slate-400">Your account stays connected to your StarPlusAI workspace.</p></div><div id="authNotice" class="hidden mb-5 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-200"></div>
+<div class="space-y-3"><button data-plan="starter" class="plan w-full text-left rounded-2xl border border-slate-800 bg-slate-900/70 p-5 transition hover:border-slate-600"><div class="flex items-center justify-between"><div><span class="font-bold text-lg">Starter</span><span class="ml-2 text-xs text-slate-500">50 requests/month</span></div><span class="text-xl font-extrabold">$29</span></div><p class="mt-2 text-sm text-slate-500">Review management, customers and standard widget.</p></button><button data-plan="growth" class="plan active w-full text-left rounded-2xl border p-5 transition hover:border-indigo-400 bg-slate-900/70"><div class="flex items-center justify-between"><div><span class="font-bold text-lg">Growth</span><span class="ml-2 text-xs text-indigo-300">Most popular</span></div><span class="text-xl font-extrabold">$79</span></div><p class="mt-2 text-sm text-slate-500">250 requests/month, custom branding and priority support.</p></button><button data-plan="pro" class="plan w-full text-left rounded-2xl border border-slate-800 bg-slate-900/70 p-5 transition hover:border-slate-600"><div class="flex items-center justify-between"><div><span class="font-bold text-lg">Pro</span><span class="ml-2 text-xs text-slate-500">Unlimited requests</span></div><span class="text-xl font-extrabold">$199</span></div><p class="mt-2 text-sm text-slate-500">Everything in Growth plus API access and manager support.</p></button></div>
+<div class="mt-6 rounded-2xl border border-slate-800 bg-slate-900/50 p-5"><div class="flex justify-between text-sm"><span class="text-slate-400">Selected plan</span><strong id="selectedPlan">Growth</strong></div><div class="flex justify-between mt-3"><span class="text-slate-400">Billing</span><strong>Monthly</strong></div><div class="h-px bg-slate-800 my-4"></div><div class="flex justify-between items-end"><span class="text-slate-400">Total</span><span id="selectedPrice" class="text-2xl font-extrabold">$79/month</span></div></div><button id="payButton" class="mt-5 w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed py-4 font-bold shadow-lg shadow-indigo-600/20">Continue to secure checkout</button><p class="mt-4 text-center text-xs text-slate-600">Payments are processed securely by Paystack. StarPlusAI does not store card details.</p></div></main></div>
 <script>
 const SUPABASE_URL='https://rxebfyhoojuyasddkqyr.supabase.co';
-const SUPABASE_ANON_KEY='YOUR_SUPABASE_ANON_KEY';
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const plans={starter:{label:'Starter',amount:29},growth:{label:'Growth',amount:79},pro:{label:'Pro',amount:199}};
-let selected=new URLSearchParams(location.search).get('plan')||'growth'; if(!plans[selected])selected='growth';
-const $=id=>document.getElementById(id);
-function render(){document.querySelectorAll('.plan').forEach(b=>b.classList.toggle('active',b.dataset.plan===selected));$('selectedPlan').textContent=plans[selected].label;$('selectedPrice').textContent='$'+plans[selected].amount+'/month'}
-document.querySelectorAll('.plan').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.plan;render();history.replaceState(null,'','checkout.html?plan='+selected)}));
-$('payButton').addEventListener('click',async()=>{
- const button=$('payButton');button.disabled=true;button.textContent='Preparing secure checkout…';$('authNotice').classList.add('hidden');
- try{
-  const {data:{session}}=await db.auth.getSession();
-  if(!session){$('authNotice').textContent='Please log in to your StarPlusAI account before choosing a paid plan.';$('authNotice').classList.remove('hidden');button.disabled=false;button.textContent='Continue to secure checkout';return;}
-  const res=await fetch(SUPABASE_URL+'/functions/v1/paystack-checkout',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({plan:selected,currency:'USD',callback_url:new URL('payment-success.html',location.href).href})});
-  const data=await res.json();if(!res.ok||!data.authorization_url)throw new Error(data.error||'Checkout could not be started.');location.href=data.authorization_url;
- }catch(e){$('authNotice').textContent=e.message;$('authNotice').classList.remove('hidden');button.disabled=false;button.textContent='Continue to secure checkout';}
-});
-render();
-</script>
-</body></html>
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4ZWJmeWhvb2p1eWFzZGRrcXlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTg4NjAsImV4cCI6MjEwNTkzNDg2MH0.77dXeFz4CuZfqeTQNJKqsfFZ-rN-n4NTowTGPA3Y5qo';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const plans={starter:{label:'Starter',amount:29},growth:{label:'Growth',amount:79},pro:{label:'Pro',amount:199}};let selected=new URLSearchParams(location.search).get('plan')||'growth';if(!plans[selected])selected='growth';const $=id=>document.getElementById(id);function render(){document.querySelectorAll('.plan').forEach(b=>b.classList.toggle('active',b.dataset.plan===selected));$('selectedPlan').textContent=plans[selected].label;$('selectedPrice').textContent='$'+plans[selected].amount+'/month')}document.querySelectorAll('.plan').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.plan;render();history.replaceState(null,'','checkout.html?plan='+selected)}));$('payButton').addEventListener('click',async()=>{const button=$('payButton');button.disabled=true;button.textContent='Preparing secure checkout…';$('authNotice').classList.add('hidden');try{const{data:{session}}=await db.auth.getSession();if(!session){$('authNotice').textContent='Please log in to your StarPlusAI account before choosing a paid plan.';$('authNotice').classList.remove('hidden');button.disabled=false;button.textContent='Continue to secure checkout';return}const res=await fetch(SUPABASE_URL+'/functions/v1/paystack-checkout',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({plan:selected,currency:'USD',callback_url:new URL('payment-success.html',location.href).href})});const data=await res.json();if(!res.ok||!data.authorization_url)throw new Error(data.error||'Checkout could not be started.');location.href=data.authorization_url}catch(e){$('authNotice').textContent=e.message;$('authNotice').classList.remove('hidden');button.disabled=false;button.textContent='Continue to secure checkout'}});render();
+</script></body></html>
